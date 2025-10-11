@@ -1,0 +1,20 @@
+﻿  Performing Custom Build Tools
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:86: warning: symbol `ASMEntryPoint': GLOBAL directive after symbol definition is an experimental feature
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:25: ... from macro `EXPORT2C' defined here
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:86: warning: symbol `__cli': GLOBAL directive after symbol definition is an experimental feature
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:25: ... from macro `EXPORT2C' defined here
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:86: warning: symbol `__sti': GLOBAL directive after symbol definition is an experimental feature
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:25: ... from macro `EXPORT2C' defined here
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:86: warning: symbol `__magic': GLOBAL directive after symbol definition is an experimental feature
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:25: ... from macro `EXPORT2C' defined here
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:86: warning: symbol `__enableSSE': GLOBAL directive after symbol definition is an experimental feature
+  C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm:25: ... from macro `EXPORT2C' defined here
+  logging.c
+  main.c
+  screen.c
+  string.c
+C:\Users\vladb\Desktop\MiniOS\kernel\string.c(805,33): warning C4090: 'function': different 'const' qualifiers
+  Generating Code...
+LINK : warning LNK4281: undesirable base address 0x200000 for x64 image; set base address above 4GB for best ASLR optimization
+  kernel.vcxproj -> C:\Users\vladb\Desktop\MiniOS\kernel\x64\Release\kernel.exe
+          1 file(s) copied.

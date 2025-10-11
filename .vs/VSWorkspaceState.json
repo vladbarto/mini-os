@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\utils",
+    "\\utils\\VS",
+    "\\utils\\VS\\RunBochs",
+    "\\utils\\VS\\RunBochs\\RunBochs",
+    "\\utils\\VS\\RunBochs\\RunBochs\\x64",
+    "\\utils\\VS\\RunBochs\\RunBochs\\x64\\Release",
+    "\\utils\\VS\\RunBochs\\x64",
+    "\\utils\\VS\\RunBochs\\x64\\Release"
+  ],
+  "SelectedNode": "\\run.cmd",
+  "PreviewInSolutionExplorer": false
+}

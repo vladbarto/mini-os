@@ -1,0 +1,8 @@
+﻿  logging.c
+  main.c
+  screen.c
+  string.c
+  Generating Code...
+C:\Users\vladb\Desktop\MiniOS\kernel\string.c(805,33): warning C4090: 'function': different 'const' qualifiers
+  kernel.vcxproj -> C:\Users\vladb\Desktop\MiniOS\kernel\Release\kernel.exe
+          1 file(s) copied.
