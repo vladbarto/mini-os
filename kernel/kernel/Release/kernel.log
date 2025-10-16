@@ -1,8 +1,4 @@
-﻿  logging.c
-  main.c
-  screen.c
-  string.c
-  Generating Code...
-C:\Users\vladb\Desktop\MiniOS\kernel\string.c(805,33): warning C4090: 'function': different 'const' qualifiers
-  kernel.vcxproj -> C:\Users\vladb\Desktop\MiniOS\kernel\Release\kernel.exe
-          1 file(s) copied.
+﻿  Performing Custom Build Tools
+  C:\Users\rapid\Desktop\mini-os\kernel\__init.asm:72: error: symbol `EFER' undefined
+  C:\Users\rapid\Desktop\mini-os\kernel\__init.asm:75: error: symbol `EFER' undefined
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: Custom build for '__init.asm' exited with code 1.

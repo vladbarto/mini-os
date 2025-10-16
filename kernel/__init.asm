@@ -52,8 +52,39 @@ ASMEntryPoint:
 
     ;TODO!!! define page tables; see https://wiki.osdev.org ,Intel's manual, http://www.brokenthorn.com/Resources/ ,http://www.jamesmolloy.co.uk/tutorial_html/
 
-    ;TODO!!! activate pagging
-    
+
+
+
+
+
+    ;TODO!!! activate paging
+;4 level paging: CR0.PG = 1
+    MOV EAX, CR0
+    OR EAX, 0x80000000 ; Set PG bit on 1
+    MOV CR0, EAX
+
+;CR4.PAE = 1
+    MOV EAX, CR4
+    OR EAX, 0x00000020 ; Set PAE bit on 1
+    MOV CR4, EAX
+
+;IA32_EFER.LME = 1
+    MOV EAX, EFER
+    break
+    OR EAX, 0x00000008 ; Set EFER.LME on 1 (bit 8)
+    MOV EFER, EAX    
+
+;CR4.LA57 = 0
+    MOV EAX, CR4
+    AND EAX, 0x0000000C ; Clear CR4.LA57 (bit 12)
+    MOV CR4, EAX
+    break
+
+
+
+
+
+
     ;TODO!!! transition to 64bits-long mode
 
     MOV     EAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
