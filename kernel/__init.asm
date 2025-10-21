@@ -32,6 +32,21 @@ IMPORTFROMC KernelMain
 TOP_OF_STACK                equ 0x200000
 KERNEL_BASE_PHYSICAL        equ 0x200000
 
+[BITS 32]
+section .data
+align 16
+GDT64_descriptor:
+    .limit  DW  GDTTable64.end - GDTTable64 - 1
+    .base   DQ  GDTTable64
+
+FLAT_DESCRIPTOR_CODE64  equ 0x00AF9A000000FFFF         ; base=0, limit=0xFFFFF, code, L=1, D=0
+FLAT_DESCRIPTOR_DATA64  equ 0x00AF92000000FFFF         ; base=0, limit=0xFFFFF, data, L=0, D=1
+GDTTable64:
+    .null     DQ 0                         ;  0
+    .code64   DQ FLAT_DESCRIPTOR_CODE64   ;  8
+    .data64   DQ FLAT_DESCRIPTOR_DATA64    ; 16
+    .end:
+
 section .bss
 align 4096
 PML4:   resq      512 ;resq
@@ -86,7 +101,6 @@ ASMEntryPoint:
 
 
 
-
     ;TODO!!! activate paging
 ; store base physical address of PML4 in CR3
     MOV EAX, PML4
@@ -110,18 +124,32 @@ ASMEntryPoint:
     AND EAX, 0xFFFFEFFF     ; Clear CR4.LA57 (bit 12) ; nu cu 0, trebe cu F-uri
     MOV CR4, EAX
 
-; ; CR0.PG = 1:
+;   load brand new GDT 64-bit table
+    LGDT [GDT64_descriptor]  
+
+; ; CR0.PG = 1: aka enable paging
     MOV EAX, CR0
     OR EAX, 0x80000000 ; Set PG bit on 1
     MOV CR0, EAX
 
-
+; reload CS with 64-bit code selector
+    JMP 0x08:long_mode_entry
     ;TODO!!! transition to 64bits-long mode
 [BITS 64]
+long_mode_entry:
+    ; set up data selectors and stack (64-bit instructions)
+    mov ax, 0x10    ; decimal 16
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov fs, ax
+    mov gs, ax
 
+    ; set 64-bit stack (use TOP_OF_STACK)
+    mov     rsp, TOP_OF_STACK
     MOV     EAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
     CALL    EAX
-    
+
     break
     CLI
     HLT
