@@ -32,7 +32,6 @@ IMPORTFROMC KernelMain
 TOP_OF_STACK                equ 0x200000
 KERNEL_BASE_PHYSICAL        equ 0x200000
 
-[BITS 32]
 section .data
 align 16
 GDT64_descriptor:
