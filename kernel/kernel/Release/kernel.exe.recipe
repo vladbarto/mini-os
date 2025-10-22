@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\vladb\Desktop\MiniOS\kernel\Release\kernel.exe</FullPath>
+      <FullPath>C:\Users\rapid\Desktop\mini-os\kernel\Release\kernel.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

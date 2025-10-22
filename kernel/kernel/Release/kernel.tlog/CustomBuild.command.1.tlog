@@ -1,2 +1,2 @@
-^C:\USERS\VLADB\DESKTOP\MINIOS\KERNEL\__INIT.ASM
-".\..\utils\nasm" -o "kernel\Release\__init.obj" -f win32 "C:\Users\vladb\Desktop\MiniOS\kernel\__init.asm"
+^C:\USERS\RAPID\DESKTOP\MINI-OS\KERNEL\__INIT.ASM
+".\..\utils\nasm" -o "kernel\Release\__init.obj" -f win32 "C:\Users\rapid\Desktop\mini-os\kernel\__init.asm"
