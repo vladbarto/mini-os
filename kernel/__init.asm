@@ -146,8 +146,8 @@ long_mode_entry:
 
     ; set 64-bit stack (use TOP_OF_STACK)
     mov     rsp, TOP_OF_STACK
-    MOV     EAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
-    CALL    EAX
+    MOV     RAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
+    CALL    RAX
 
     break
     CLI
@@ -168,9 +168,9 @@ __magic:
     RET
     
 __enableSSE:                ;; enable SSE instructions (CR4.OSFXSR = 1)  
-    MOV     EAX, CR4
-    OR      EAX, 0x00000200
-    MOV     CR4, EAX
+    MOV     RAX, CR4
+    OR      RAX, 0x00000200
+    MOV     CR4, RAX
     RET
     
 EXPORT2C ASMEntryPoint, __cli, __sti, __magic, __enableSSE
