@@ -12,7 +12,8 @@ SRC_C =\
 	$(SRC_DIR)/ata_commands.h \
 	$(SRC_DIR)/scancode.h
 SRC_ASM =\
-	$(SRC_DIR)/__init.asm
+	$(SRC_DIR)/__init.asm \
+	$(SRC_DIR)/__isr.asm
 
 make-floppy: kernel
 	python3 utils/makeFloppy.py boot/mbr.asm boot/ssl.asm

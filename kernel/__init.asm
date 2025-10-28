@@ -128,7 +128,7 @@ ASMEntryPoint:
 
 ; ; CR0.PG = 1: aka enable paging
     MOV EAX, CR0
-    OR EAX, 0x80000000 ; Set PG bit on 1
+    OR EAX, u ; Set PG bit on 1
     MOV CR0, EAX
 
 ; reload CS with 64-bit code selector

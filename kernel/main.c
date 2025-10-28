@@ -2,7 +2,6 @@
 #include "screen.h"
 #include "logging.h"
 
-
 void KernelMain()
 {
     //__magic();    // break into BOCHS
@@ -20,6 +19,7 @@ void KernelMain()
     // TODO!!! PIC programming; see http://www.osdever.net/tutorials/view/programming-the-pic
     // TODO!!! define interrupt routines and dump trap frame
     
+
     // TODO!!! Timer programming
 
     // TODO!!! Keyboard programming
