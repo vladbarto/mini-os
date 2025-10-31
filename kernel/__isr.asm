@@ -1,9 +1,17 @@
+segment .data
+COMPLETE_PROCESSOR_STATE_OFFSET equ 136     ; 17*8 bytes | OBSOLETE: count 19*8 bytes
+INTERRUPT_INDEX_OFFSET          equ 8       ; count  1*8 bytes
+ERROR_CODE_AVAILABLE_OFFSET     equ 8       ; count  1*8 bytes
+
+
 segment .text
 [BITS 64]
-IMPORTFROMC InterruptCommonHandler
+extern InterruptCommonHandler
 
 exception_handler:
     ; salvati tot ce trebuie (registrii de uz general, de segment si de stare (RFLAGS)
+    ;------------------------------
+    ; Prepair COMPLETE_PROCESSOR_STATE (param 4 of InterruptCommonHandler)
     push RAX
     push RCX
     push RDX
@@ -11,8 +19,6 @@ exception_handler:
     push RSI
     push RDI
     push RBP
-    push RSP
-    ; push RIP ; trebuie?
     push R8
     push R9
     push R10
@@ -21,33 +27,69 @@ exception_handler:
     push R13
     push R14
     push R15
-    push CS
-    push DS
-    push ES
-    push SS
+    ;push DS
+    ;push ES
     push FS
     push GS
-    push RFLAGS
-
+    ; COMPLETE PROCESSOR_STATE (end param 4)
+    ;------------------------------
+    
+    lea RDI, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET + ERROR_CODE_AVAILABLE_OFFSET] ; save StackPointer
+    mov RSI, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET] ; get ErrorCodeAvailable parameter
+    mov RDX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET] ; get InterruptIndex parameter
+    mov RCX, [RSP] ; get Complete_Processor_State parameter
     call InterruptCommonHandler
 
     ; before calling iretq you must clear ErrorCode from the stack
     ; i.e. move RSP after ErrorCode
+
+    ; restore processor state
+    pop GS
+    pop FS
+    ;pop ES
+    ;pop DS
+    pop R15
+    pop R14
+    pop R13
+    pop R12
+    pop R11
+    pop R10
+    pop R9
+    pop R8
+    pop RBP
+    pop RDI
+    pop RSI
+    pop RBX
+    pop RDX
+    pop RCX
+    pop RAX
+    ; compute Clear Stack value
+    ;add RAX, COMPLETE_PROCESSOR_STATE_OFFSET -> NOT needed, since we popped register values back where they were
+    add RAX, INTERRUPT_INDEX_OFFSET
+    add RAX, ERROR_CODE_AVAILABLE_OFFSET
+    add RAX, 8 ; we must clear ErrorCode
+
+    ; Clear the stack
+    add RSP, RAX ; so add RSP, 24
+    ;add esp, saved state size
+    ;add RSP, 24 ; FIXME: 16 sau 8? stiva tre sa fie aliniata la 16 bytes
+    
     iretq
 
 %macro isr_err_stub 1 ; declare macro with 1 parameter
 global isr_err_stub_%+%1  ; declare a global symbol named isr_stub_{param1}
 isr_err_stub_%+%1:
-    push 1 ; there is an error code
-    push %1 ; interrupt index (first macro parameter)
+    push 1 ; there is an error code // ErrorCodeAvailable (param 3)
+    push %1 ; interrupt index (first macro parameter) // InterruptIndex (param 2)
     jmp exception_handler
 %endmacro
 
 %macro isr_no_err_stub 1 ; declare macro with 1 parameter
 global isr_no_err_stub_%+%1  ; declare a global symbol named isr_stub_{param1}
 isr_no_err_stub_%+%1:
-    push 0 ; there is no error code (TODO: check against documentation)
-    push %1 ; interrupt index (first macro parameter)
+    push 0x50 ; whatever pseudo errorcode 
+    push 0 ; there is no error code // ErrorCodeAvailable (param 3)
+    push %1 ; interrupt index (first macro parameter) // InterruptIndex (param 2)
     jmp exception_handler
 %endmacro
 
@@ -86,11 +128,46 @@ isr_no_err_stub 31
 
 extern exception_handler
 
+; global isr_stub_table
+; isr_stub_table:
+; %assign i 0 
+; %rep    32 
+;     dq isr_stub_%+i ; use DQ instead if targeting 64-bit
+; %assign i i+1 
+; %endrep
+
+
 global isr_stub_table
 isr_stub_table:
-%assign i 0 
-%rep    32 
-; FIXME: daca entry-ul ii no_err_stub
-    dq isr_stub_%+i ; use DQ instead if targeting 64-bit
-%assign i i+1 
-%endrep
+    dq isr_no_err_stub_0
+    dq isr_no_err_stub_1
+    dq isr_no_err_stub_2
+    dq isr_no_err_stub_3
+    dq isr_no_err_stub_4
+    dq isr_no_err_stub_5
+    dq isr_no_err_stub_6
+    dq isr_no_err_stub_7
+    dq isr_err_stub_8
+    dq isr_no_err_stub_9
+    dq isr_err_stub_10
+    dq isr_err_stub_11
+    dq isr_err_stub_12
+    dq isr_err_stub_13
+    dq isr_err_stub_14
+    dq isr_no_err_stub_15
+    dq isr_no_err_stub_16
+    dq isr_err_stub_17
+    dq isr_no_err_stub_18
+    dq isr_no_err_stub_19
+    dq isr_no_err_stub_20
+    dq isr_no_err_stub_21
+    dq isr_no_err_stub_22
+    dq isr_no_err_stub_23
+    dq isr_no_err_stub_24
+    dq isr_no_err_stub_25
+    dq isr_no_err_stub_26
+    dq isr_no_err_stub_27
+    dq isr_no_err_stub_28
+    dq isr_no_err_stub_29
+    dq isr_err_stub_30
+    dq isr_no_err_stub_31

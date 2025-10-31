@@ -128,7 +128,7 @@ ASMEntryPoint:
 
 ; ; CR0.PG = 1: aka enable paging
     MOV EAX, CR0
-    OR EAX, u ; Set PG bit on 1
+    OR EAX, 0x80000000 ; Set PG bit on 1
     MOV CR0, EAX
 
 ; reload CS with 64-bit code selector
@@ -144,15 +144,24 @@ long_mode_entry:
     mov fs, ax
     mov gs, ax
 
+    
     ; set 64-bit stack (use TOP_OF_STACK)
     mov     rsp, TOP_OF_STACK
+
+    ; sub RSP, 0x20 ; va trebui sa scadem stiva
     MOV     RAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
     CALL    RAX
 
     break
-    CLI
+
+    .back:  ; labels cu punct is locale
+    CLI ; schimbam in STI 
+    ;STI ; daca pui de pe acuma iti vine double fault
+    ; safe sa punem asta dupa ce programezi pIc si nu demaschezi nimica, programezi timeru...
     HLT
 
+    ; jump inapoi
+    jmp .back
 ;;--------------------------------------------------------
 
 __cli:
