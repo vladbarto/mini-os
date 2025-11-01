@@ -1,5 +1,5 @@
 segment .data
-COMPLETE_PROCESSOR_STATE_OFFSET equ 136     ; 17*8 bytes | OBSOLETE: count 19*8 bytes
+COMPLETE_PROCESSOR_STATE_OFFSET equ 136     ; count 17*8 bytes
 INTERRUPT_INDEX_OFFSET          equ 8       ; count  1*8 bytes
 ERROR_CODE_AVAILABLE_OFFSET     equ 8       ; count  1*8 bytes
 
@@ -27,18 +27,23 @@ exception_handler:
     push R13
     push R14
     push R15
-    ;push DS
-    ;push ES
     push FS
     push GS
     ; COMPLETE PROCESSOR_STATE (end param 4)
     ;------------------------------
-    
-    lea RDI, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET + ERROR_CODE_AVAILABLE_OFFSET] ; save StackPointer
-    mov RSI, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET] ; get ErrorCodeAvailable parameter
-    mov RDX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET] ; get InterruptIndex parameter
-    mov RCX, [RSP] ; get Complete_Processor_State parameter
+    ; arg1 = rcx
+    ; arg2 = rdx
+    ; arg3 = r8
+    ; arg4 = r9
+    lea R9, [RSP] ; get Complete_Processor_State parameter
+    mov R8, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET] ; get InterruptIndex parameter
+    mov RDX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET] ; get ErrorCodeAvailable parameter
+    lea RCX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET + ERROR_CODE_AVAILABLE_OFFSET] ; save StackPointer
+
+    ; align stack to 16 bytes
+    sub rsp, 8     ; now RSP % 16 == 0
     call InterruptCommonHandler
+    add rsp, 8     ; restore to previous RSP value
 
     ; before calling iretq you must clear ErrorCode from the stack
     ; i.e. move RSP after ErrorCode
@@ -46,8 +51,6 @@ exception_handler:
     ; restore processor state
     pop GS
     pop FS
-    ;pop ES
-    ;pop DS
     pop R15
     pop R14
     pop R13
@@ -63,17 +66,12 @@ exception_handler:
     pop RDX
     pop RCX
     pop RAX
-    ; compute Clear Stack value
-    ;add RAX, COMPLETE_PROCESSOR_STATE_OFFSET -> NOT needed, since we popped register values back where they were
-    add RAX, INTERRUPT_INDEX_OFFSET
-    add RAX, ERROR_CODE_AVAILABLE_OFFSET
-    add RAX, 8 ; we must clear ErrorCode
-
-    ; Clear the stack
-    add RSP, RAX ; so add RSP, 24
-    ;add esp, saved state size
-    ;add RSP, 24 ; FIXME: 16 sau 8? stiva tre sa fie aliniata la 16 bytes
     
+    ; Clear the stack
+    add RSP, 24 ; FIXME: 16 sau 8? stiva tre sa fie aliniata la 16 bytes
+    CLI
+    HLT
+
     iretq
 
 %macro isr_err_stub 1 ; declare macro with 1 parameter

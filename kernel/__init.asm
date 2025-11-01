@@ -40,10 +40,13 @@ GDT64_descriptor:
 
 FLAT_DESCRIPTOR_CODE64  equ 0x00AF9A000000FFFF         ; base=0, limit=0xFFFFF, code, L=1, D=0
 FLAT_DESCRIPTOR_DATA64  equ 0x00AF92000000FFFF         ; base=0, limit=0xFFFFF, data, L=0, D=1
+NONPRESENT_DATA64       equ 0x00AF12000000FFFF ; P=0 (bit 7 of access byte cleared)
+
 GDTTable64:
-    .null     DQ 0                         ;  0
-    .code64   DQ FLAT_DESCRIPTOR_CODE64   ;  8
-    .data64   DQ FLAT_DESCRIPTOR_DATA64    ; 16
+    .null     DQ 0                          ;  0
+    .code64   DQ FLAT_DESCRIPTOR_CODE64     ;  8
+    .data64   DQ FLAT_DESCRIPTOR_DATA64     ; 16
+    .npdata64 DQ NONPRESENT_DATA64          ; 24
     .end:
 
 section .bss
@@ -152,16 +155,14 @@ long_mode_entry:
     MOV     RAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
     CALL    RAX
 
-    break
-
-    .back:  ; labels cu punct is locale
+    ;.back:  ; labels cu punct is locale
     CLI ; schimbam in STI 
     ;STI ; daca pui de pe acuma iti vine double fault
     ; safe sa punem asta dupa ce programezi pIc si nu demaschezi nimica, programezi timeru...
     HLT
 
     ; jump inapoi
-    jmp .back
+    ;jmp .back
 ;;--------------------------------------------------------
 
 __cli:

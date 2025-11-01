@@ -3,6 +3,15 @@
 
 
 #include "main.h"
+#include "types.h"
+
+// Compatibility for Visual Studio–style code
+#ifndef _MSC_VER
+#define _Return_type_success_(x)
+#ifndef SUCCEEDED
+#define SUCCEEDED(hr) ((hr) >= 0)
+#endif
+#endif
 
 // most often used numbering bases
 #define BASE_TWO            2
@@ -37,7 +46,8 @@ typedef void*               PVOID;
 
 #define INVALID_STRING_SIZE             MAX_DWORD
 
-typedef _Return_type_success_(SUCCEEDED(return)) DWORD  STATUS;
+// typedef _Return_type_success_(SUCCEEDED(return)) DWORD  STATUS; // only works under Microsoft VS
+typedef DWORD STATUS; // replacement
 
 #ifndef _VA_LIST_DEFINED
 #define _VA_LIST_DEFINED
@@ -80,7 +90,7 @@ typedef PBYTE               va_list;
 //                value
 //******************************************************************************
 void
-itoa(
+cl_itoa(
     PVOID       valueAddress,
     BOOLEAN     signedValue,
     char*       buffer,
@@ -89,7 +99,7 @@ itoa(
     );
 
 void
-atoi(
+cl_atoi(
     PVOID       valueAddress,
     char*       buffer,
     DWORD       base,

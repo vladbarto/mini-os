@@ -58,7 +58,48 @@ void ClearScreen()
         gVideo[i].color = 10;
         gVideo[i].c = ' ';
     }
-
     CursorMove(0, 0);
 }
 
+
+void ScreenDisplay(const char* str, BYTE color)
+{
+    // Get current cursor position
+    unsigned short pos_low, pos_high;
+    __outbyte(0x3D4, 0x0F);
+    pos_low = __inbyte(0x3D5);
+    __outbyte(0x3D4, 0x0E);
+    pos_high = __inbyte(0x3D5);
+    int cursorPos = (pos_high << 8) | pos_low;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        char c = str[i];
+
+        if (c == '\n') {
+            cursorPos += MAX_COLUMNS - (cursorPos % MAX_COLUMNS);
+        } else {
+            if (cursorPos >= MAX_OFFSET)
+                cursorPos = 0; // wrap
+
+            gVideo[cursorPos].c = c;
+            gVideo[cursorPos].color = color;
+            cursorPos++;
+        }
+    }
+
+    CursorPosition(cursorPos);
+}
+
+void LogSerialAndScreen(char* FormatBuffer, ...)
+{
+    char logBuffer[LOG_BUF_MAX_SIZE];
+    va_list va;
+
+    va_start(va, FormatBuffer);
+    cl_vsnprintf(logBuffer, LOG_BUF_MAX_SIZE, FormatBuffer, va);
+
+    // after call logBuffer will contain formatted buffer
+
+    Log(logBuffer); // log through serial
+    ScreenDisplay(logBuffer, 0x03); // display on screen - you will need to implement this part in `screen.c`
+}

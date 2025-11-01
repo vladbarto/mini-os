@@ -1,1 +1,24 @@
-Logging initialized!
+Logging initialized!Trap Info:
+---------------
+stack pointer = 1FFFA0
+processor state pointer = 1FFF08
+ErrorCodeAvailable = 1
+InterruptIndex = 11
+---------------
+Registers:
+rax=18 rbx=B400 rcx=1F
+rdx=20B020 rsi=20000 rdi=21B000
+rip=201511 rsp=1FFFD0 rbp=1FFFF0
+r8=8E r9=0 r10=0
+r11=0 r12=0 r13=0
+r14=0 r15=1FFF08
+cs=8 ss=10 fs=B gs=1 rflags=10006
+
+Stack (first 10 qwords) from interrupted RSP:
+|-Address-|-Value-|--|-Address-|-Value-|
+1FFFD0: 204000    |     1FFFD0: 204000
+1FFFC0: 8E    |     1FFFB0: 204000
+1FFFB0: 204000    |     1FFF90: 0
+1FFFA0: 0    |     1FFF70: 0
+1FFF90: 0    |     1FFF50: 16
+---- trap done ----

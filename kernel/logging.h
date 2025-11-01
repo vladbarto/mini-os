@@ -2,6 +2,8 @@
 #define _LOGGING_H_
 
 #include "main.h"
+#include "types.h"
+#include "ioaccess.h"
 
 void InitLogging();
 

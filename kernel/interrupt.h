@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "main.h"
+#include "screen.h"
 
 #define IDT_MAX_DESCRIPTORS 32
 #define GDT_OFFSET_KERNEL_CODE 8
@@ -26,44 +27,46 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 typedef struct _INTERRUPT_STACK_COMPLETE{
-    uint64_t SS;
-    uint64_t RSP;
-    uint64_t RFLAGS;
-    uint64_t CS;  // optional, only if privilege change
-    uint64_t RIP;   // optional, only if privilege change
+    // uint64_t SS;
+    // uint64_t RSP;
+    // uint64_t RFLAGS;
+    // uint64_t CS;  // optional, only if privilege change
+    // uint64_t RIP;   // optional, only if privilege change
+    // uint64_t ErrorCode; // present only for exceptions with error code
     uint64_t ErrorCode; // present only for exceptions with error code
+    uint64_t RIP;   // optional, only if privilege change
+    uint64_t CS;  // optional, only if privilege change
+    uint64_t RFLAGS;
+    uint64_t RSP;
+    uint64_t SS; 
 } INTERRUPT_STACK_COMPLETE;
 
 typedef struct _COMPLETE_PROCESSOR_STATE {
-    int64_t RAX;
-    int64_t RCX;
-    int64_t RDX;
-    int64_t RBX;
-    int64_t RSI;
-    int64_t RDI;
-    int64_t RBP;
-    int64_t R8;
-    int64_t R9;
-    int64_t R10;
-    int64_t R11;
-    int64_t R12;
-    int64_t R13;
-    int64_t R14;
-    int64_t R15;
-    // int64_t DS;
-    // int64_t ES;
-    int64_t FS;
     int64_t GS;
+    int64_t FS;
+    int64_t R15;
+    int64_t R14;
+    int64_t R13;
+    int64_t R12;
+    int64_t R11;
+    int64_t R10;
+    int64_t R9;
+    int64_t R8;
+    int64_t RBP;
+    int64_t RDI;
+    int64_t RSI;
+    int64_t RBX;
+    int64_t RDX;
+    int64_t RCX;
+    int64_t RAX;
 } COMPLETE_PROCESSOR_STATE;
 
 extern void* isr_stub_table[];
+extern idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
+extern idtr_t idtr;
 
-__attribute__((aligned(0x10))) 
-static idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
-static idtr_t idtr;
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init(void);
-
 void InterruptCommonHandler(
     INTERRUPT_STACK_COMPLETE* StackPointer, // Pointer to Stack Pointer After Transfer to Handler (Fig 6-9)
     uint8_t                   ErrorCodeAvailable, // 0 if not available
