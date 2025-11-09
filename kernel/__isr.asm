@@ -123,6 +123,23 @@ isr_no_err_stub 28
 isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
+; IRQs 32–47 (0x20–0x2F)
+isr_no_err_stub 32
+isr_no_err_stub 33
+isr_no_err_stub 34
+isr_no_err_stub 35
+isr_no_err_stub 36
+isr_no_err_stub 37
+isr_no_err_stub 38
+isr_no_err_stub 39
+isr_no_err_stub 40
+isr_no_err_stub 41
+isr_no_err_stub 42
+isr_no_err_stub 43
+isr_no_err_stub 44
+isr_no_err_stub 45
+isr_no_err_stub 46
+isr_no_err_stub 47
 
 extern exception_handler
 
@@ -169,3 +186,20 @@ isr_stub_table:
     dq isr_no_err_stub_29
     dq isr_err_stub_30
     dq isr_no_err_stub_31
+    ; [0x20 - 0x2F] for PIC
+    dq isr_no_err_stub 32
+    dq isr_no_err_stub 33
+    dq isr_no_err_stub 34
+    dq isr_no_err_stub 35
+    dq isr_no_err_stub 36
+    dq isr_no_err_stub 37
+    dq isr_no_err_stub 38
+    dq isr_no_err_stub 39
+    dq isr_no_err_stub 40
+    dq isr_no_err_stub 41
+    dq isr_no_err_stub 42
+    dq isr_no_err_stub 43
+    dq isr_no_err_stub 44
+    dq isr_no_err_stub 45
+    dq isr_no_err_stub 46
+    dq isr_no_err_stub 47

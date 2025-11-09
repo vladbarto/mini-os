@@ -18,3 +18,8 @@ uint8_t __inbyte(uint16_t port)
                    : "memory");
     return ret;
 }
+
+void io_wait(void)
+{
+    __outbyte(0x80, 0);
+}

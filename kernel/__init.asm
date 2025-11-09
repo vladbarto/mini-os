@@ -155,14 +155,12 @@ long_mode_entry:
     MOV     RAX, KernelMain     ; after 64bits transition is implemented the kernel must be compiled on x64
     CALL    RAX
 
-    ;.back:  ; labels cu punct is locale
-    CLI ; schimbam in STI 
-    ;STI ; daca pui de pe acuma iti vine double fault
-    ; safe sa punem asta dupa ce programezi pIc si nu demaschezi nimica, programezi timeru...
+    
+.back:  ; labels cu punct is locale
+    STI ; safe sa punem asta dupa ce programezi PIC si nu demaschezi nimica, programezi timeru...
     HLT
-
-    ; jump inapoi
-    ;jmp .back
+    
+    jmp .back ; jump inapoi
 ;;--------------------------------------------------------
 
 __cli:

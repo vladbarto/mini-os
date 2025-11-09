@@ -7,7 +7,7 @@
 #include "main.h"
 #include "screen.h"
 
-#define IDT_MAX_DESCRIPTORS 32
+#define IDT_MAX_DESCRIPTORS 48
 #define GDT_OFFSET_KERNEL_CODE 8
 #define GDT_OFFSET_KERNEL_DATA 16
 
@@ -27,12 +27,6 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 typedef struct _INTERRUPT_STACK_COMPLETE{
-    // uint64_t SS;
-    // uint64_t RSP;
-    // uint64_t RFLAGS;
-    // uint64_t CS;  // optional, only if privilege change
-    // uint64_t RIP;   // optional, only if privilege change
-    // uint64_t ErrorCode; // present only for exceptions with error code
     uint64_t ErrorCode; // present only for exceptions with error code
     uint64_t RIP;   // optional, only if privilege change
     uint64_t CS;  // optional, only if privilege change
@@ -64,6 +58,7 @@ typedef struct _COMPLETE_PROCESSOR_STATE {
 extern void* isr_stub_table[];
 extern idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
 extern idtr_t idtr;
+extern volatile uint64_t g_TickCount;
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init(void);

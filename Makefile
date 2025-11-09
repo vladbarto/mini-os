@@ -1,12 +1,14 @@
 SRC_DIR = kernel
 
-SRC_C = \
-	$(SRC_DIR)/main.c \
-	$(SRC_DIR)/screen.c \
-	$(SRC_DIR)/logging.c \
-	$(SRC_DIR)/string.c \
-	$(SRC_DIR)/interrupt.c \
-	$(SRC_DIR)/ioaccess.c
+# SRC_C = \
+# 	$(SRC_DIR)/main.c \
+# 	$(SRC_DIR)/screen.c \
+# 	$(SRC_DIR)/logging.c \
+# 	$(SRC_DIR)/string.c \
+# 	$(SRC_DIR)/interrupt.c \
+# 	$(SRC_DIR)/ioaccess.c
+
+SRC_C = $(wildcard $(SRC_DIR)/*.c)
 
 SRC_ASM = \
 	$(SRC_DIR)/__init.asm \
