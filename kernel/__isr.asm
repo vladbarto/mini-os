@@ -187,19 +187,19 @@ isr_stub_table:
     dq isr_err_stub_30
     dq isr_no_err_stub_31
     ; [0x20 - 0x2F] for PIC
-    dq isr_no_err_stub 32
-    dq isr_no_err_stub 33
-    dq isr_no_err_stub 34
-    dq isr_no_err_stub 35
-    dq isr_no_err_stub 36
-    dq isr_no_err_stub 37
-    dq isr_no_err_stub 38
-    dq isr_no_err_stub 39
-    dq isr_no_err_stub 40
-    dq isr_no_err_stub 41
-    dq isr_no_err_stub 42
-    dq isr_no_err_stub 43
-    dq isr_no_err_stub 44
-    dq isr_no_err_stub 45
-    dq isr_no_err_stub 46
-    dq isr_no_err_stub 47
+    dq isr_no_err_stub_32
+    dq isr_no_err_stub_33
+    dq isr_no_err_stub_34
+    dq isr_no_err_stub_35
+    dq isr_no_err_stub_36
+    dq isr_no_err_stub_37
+    dq isr_no_err_stub_38
+    dq isr_no_err_stub_39
+    dq isr_no_err_stub_40
+    dq isr_no_err_stub_41
+    dq isr_no_err_stub_42
+    dq isr_no_err_stub_43
+    dq isr_no_err_stub_44
+    dq isr_no_err_stub_45
+    dq isr_no_err_stub_46
+    dq isr_no_err_stub_47

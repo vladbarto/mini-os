@@ -1,1 +1,29 @@
 Logging initialized!
+PIC remapped (master=0x20, slave=0x28)
+All IRQs masked with 0xFF.
+IDT initialized.
+PIT initialized for 100 Hz (divisor=11931).
+Trap Info:
+---------------
+stack pointer = 1FFF10
+processor state pointer = 1FFE78
+ErrorCodeAvailable = 1
+InterruptIndex = 13
+---------------
+Registers:
+rax=20 rbx=B400 rcx=20
+rdx=20 rsi=20000 rdi=21B000
+rip=20115C rsp=1FFF40 rbp=0
+r8=20 r9=1FFF38 r10=0
+r11=0 r12=0 r13=0
+r14=0 r15=1FFE78
+cs=8 ss=10 fs=D gs=1 rflags=10002
+
+Stack (first 10 qwords) from interrupted RSP:
+|-Address-|-Value-|--|-Address-|-Value-|
+1FFF40: 20    |     1FFF40: 20
+1FFF30: 20    |     1FFF20: 20
+1FFF20: 0    |     1FFF00: 1FFDD0
+1FFF10: 0    |     1FFEE0: 0
+1FFF00: 1FFDD0    |     1FFEC0: 304545460030
+---- trap done ----

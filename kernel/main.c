@@ -8,26 +8,27 @@ void KernelMain()
 
     InitLogging();
 
-    Log("Logging initialized!");
+    Log("Logging initialized!\n");
 
-    
     HelloBoot();
 
     PIC_remap(0x20, 0x28);
-    Log("PIC remapped (master=0x20, slave=0x28)");
+    Log("PIC remapped (master=0x20, slave=0x28)\n");
 
     PIC_disable();
-    Log("All IRQs masked with 0xFF.");
+    Log("All IRQs masked with 0xFF.\n");
 
     idt_init();
-    Log("IDT initialized.");
-
+    Log("IDT initialized.\n");
+    __magic();
     // Program Timer (aka PIT)
     PIT_init(100);
+    PS2_keyboard_init();
     
-    PIC_unmask(0); //timer
-    PIC_unmask(1); //keyboard
+    PIC_unmask(0); // IRQ0 = timer
+    PIC_unmask(1); // IRQ1 = keyboard
 
+    __magic();
 /* Uncomment each one alternatively to test IDT functionality. Both uncommented will not work */
     // division by 0; generate #DE
     // int DivisionByZero = 23/0;
@@ -40,8 +41,6 @@ void KernelMain()
 //     "mov ds, ax\n\t"
 //     ".att_syntax prefix\n\t"
 // );
-
-    __magic();    
 
     // TODO!!! Timer programming
 

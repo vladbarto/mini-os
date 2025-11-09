@@ -13,5 +13,5 @@ void PIT_init(uint32_t freq_hz)
     __outbyte(PIT_CHANNEL0, divisor & 0xFF);
     __outbyte(PIT_CHANNEL0, (divisor >> 8) & 0xFF);
 
-    Log("PIT initialized for %u Hz (divisor=%u).", freq_hz, divisor);
+    FormattedLog("PIT initialized for %u Hz (divisor=%u).\n", freq_hz, divisor);
 }

@@ -5,6 +5,11 @@ idt_entry_t idt[256];
 
 idtr_t idtr;
 
+volatile uint64_t g_TickCount = 0;
+// extern const char* _kkybrd_scancode_std; // normal scancode-to-char table
+// extern const char* _kkybrd_scancode_ext; // extended scancode-to-char table
+static uint8_t kbd_ext_state = 0; // 0 = none, 0xE0 or 0xE1 if prefix seen
+
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     idt_entry_t* descriptor = &idt[vector];
 
@@ -28,7 +33,7 @@ void idt_init() {
         vectors[vector] = true;
     }
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
-    // __asm__ volatile ("sti"); // set the interrupt flag
+    //__asm__ volatile ("sti"); // set the interrupt flag
 }
 
 void InterruptCommonHandler(
@@ -106,9 +111,33 @@ void InterruptCommonHandler(
             }
             break;
 
-        case 1: // Keyboard
-            // optional: uint8_t sc = __inbyte(0x60);
-            break;
+        case 1:  {// Keyboard IRQ
+            // only read if output buffer full
+            uint8_t status = __inbyte(PS2_STATUS_PORT);
+            if (status & PS2_STATUS_OUTPUT_BUFFER_FULL) {
+                uint8_t sc = __inbyte(PS2_DATA_PORT);
+
+                // handle extended prefixes
+                if (sc == 0xE0 || sc == 0xE1) {
+                    kbd_ext_state = sc; // wait for next byte(s)
+                } else {
+                    bool released = (sc & 0x80) != 0;
+                    uint8_t sc_masked = sc & 0x7F;
+                    char ch = 0;
+                    if (kbd_ext_state) {
+                        ch = _kkybrd_scancode_ext[sc_masked]; // your table index
+                        kbd_ext_state = 0;
+                    } else {
+                        ch = _kkybrd_scancode_std[sc_masked];
+                    }
+
+                    if (!released && ch) {
+                        // display printable char
+                        LogSerialAndScreen("%c", ch); // or screen_putc(ch);
+                    }
+                }
+            }
+        }
 
         default:
             break;
@@ -116,6 +145,5 @@ void InterruptCommonHandler(
 
         PIC_sendEOI(irq);
     }
-    __magic();
     // ClearScreen();
 }
