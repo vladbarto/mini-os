@@ -98,13 +98,16 @@ void InterruptCommonHandler(
         }
 
         LogSerialAndScreen("---- trap done ----\n");
-
+        
+        __asm__ volatile ("CLI"); // clear the interrupt flag
+        __asm__ volatile ("HLT"); // halt the processor
         ClearScreen();
     } else  {
         uint8_t irq = InterruptIndex - 32;
 
         switch (irq) {
         case 0: // Timer
+            // LogSerialAndScreen("Vine intreruprerea de ceas la g_TickCount= %u\n", (uint32_t)g_TickCount);
             g_TickCount++;
             if (g_TickCount % 100 == 0) {
                 LogSerialAndScreen("Timer tick: %u\n", (uint32_t)g_TickCount);

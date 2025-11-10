@@ -40,11 +40,14 @@ exception_handler:
     mov RDX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET] ; get ErrorCodeAvailable parameter
     lea RCX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET + ERROR_CODE_AVAILABLE_OFFSET] ; save StackPointer
 
+        sub RSP, 32 ; shadow space
+
     ; align stack to 16 bytes
     sub rsp, 8     ; now RSP % 16 == 0
     call InterruptCommonHandler
     add rsp, 8     ; restore to previous RSP value
 
+        add RSP, 32 ; recover shadow space
     ; before calling iretq you must clear ErrorCode from the stack
     ; i.e. move RSP after ErrorCode
 
@@ -68,9 +71,10 @@ exception_handler:
     pop RAX
     
     ; Clear the stack
-    add RSP, 24 ; FIXME: 16 sau 8? stiva tre sa fie aliniata la 16 bytes
-    CLI
-    HLT
+    add RSP, 24
+
+    ;CLI
+    ;HLT
 
     iretq
 
