@@ -1,7 +1,4 @@
 #include "main.h"
-#include "screen.h"
-#include "logging.h"
-#include "interrupt.h"
 
 void KernelMain()
 {   
@@ -11,12 +8,28 @@ void KernelMain()
 
     InitLogging();
 
-    Log("Logging initialized!");
+    Log("Logging initialized!\n");
 
-    
     HelloBoot();
-    idt_init();
 
+    PIC_remap(0x20, 0x28);
+    Log("PIC remapped (master=0x20, slave=0x28)\n");
+
+    PIC_disable();
+    Log("All IRQs masked with 0xFF.\n");
+
+    idt_init();
+    Log("IDT initialized.\n");
+    __magic();
+    // Program Timer (aka PIT)
+    PIT_init(100);
+    PS2_keyboard_init();
+    
+    __magic();
+    PIC_unmask(0); // IRQ0 = timer
+    PIC_unmask(1); // IRQ1 = keyboard
+
+    __magic();
 /* Uncomment each one alternatively to test IDT functionality. Both uncommented will not work */
     // division by 0; generate #DE
     // int DivisionByZero = 23/0;
@@ -29,10 +42,6 @@ void KernelMain()
 //     "mov ds, ax\n\t"
 //     ".att_syntax prefix\n\t"
 // );
-    __magic();
-    // TODO!!! PIC programming; see http://www.osdever.net/tutorials/view/programming-the-pic
-    // TODO!!! define interrupt routines and dump trap frame
-    
 
     // TODO!!! Timer programming
 

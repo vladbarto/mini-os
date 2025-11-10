@@ -8,5 +8,7 @@
 
 void __outbyte(uint16_t port, uint8_t val);
 uint8_t __inbyte(uint16_t port);
+void io_wait(void);
+
 
 #endif // _IOACCESS_H_

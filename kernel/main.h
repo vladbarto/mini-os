@@ -14,7 +14,12 @@
 // typedef signed __int16      INT16;
 // typedef signed __int32      INT32;
 // typedef signed __int64      INT64;
+#include "screen.h"
+#include "logging.h"
+#include "interrupt.h"
 #include "types.h"
+#include "pic.h"
+#include "pit.h"
 //
 // exported functions from __init.asm
 //

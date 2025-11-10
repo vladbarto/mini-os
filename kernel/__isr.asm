@@ -40,11 +40,14 @@ exception_handler:
     mov RDX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET] ; get ErrorCodeAvailable parameter
     lea RCX, [RSP + COMPLETE_PROCESSOR_STATE_OFFSET + INTERRUPT_INDEX_OFFSET + ERROR_CODE_AVAILABLE_OFFSET] ; save StackPointer
 
+        sub RSP, 32 ; shadow space
+
     ; align stack to 16 bytes
     sub rsp, 8     ; now RSP % 16 == 0
     call InterruptCommonHandler
     add rsp, 8     ; restore to previous RSP value
 
+        add RSP, 32 ; recover shadow space
     ; before calling iretq you must clear ErrorCode from the stack
     ; i.e. move RSP after ErrorCode
 
@@ -68,9 +71,10 @@ exception_handler:
     pop RAX
     
     ; Clear the stack
-    add RSP, 24 ; FIXME: 16 sau 8? stiva tre sa fie aliniata la 16 bytes
-    CLI
-    HLT
+    add RSP, 24
+
+    ;CLI
+    ;HLT
 
     iretq
 
@@ -123,6 +127,23 @@ isr_no_err_stub 28
 isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
+; IRQs 32–47 (0x20–0x2F)
+isr_no_err_stub 32
+isr_no_err_stub 33
+isr_no_err_stub 34
+isr_no_err_stub 35
+isr_no_err_stub 36
+isr_no_err_stub 37
+isr_no_err_stub 38
+isr_no_err_stub 39
+isr_no_err_stub 40
+isr_no_err_stub 41
+isr_no_err_stub 42
+isr_no_err_stub 43
+isr_no_err_stub 44
+isr_no_err_stub 45
+isr_no_err_stub 46
+isr_no_err_stub 47
 
 extern exception_handler
 
@@ -169,3 +190,20 @@ isr_stub_table:
     dq isr_no_err_stub_29
     dq isr_err_stub_30
     dq isr_no_err_stub_31
+    ; [0x20 - 0x2F] for PIC
+    dq isr_no_err_stub_32
+    dq isr_no_err_stub_33
+    dq isr_no_err_stub_34
+    dq isr_no_err_stub_35
+    dq isr_no_err_stub_36
+    dq isr_no_err_stub_37
+    dq isr_no_err_stub_38
+    dq isr_no_err_stub_39
+    dq isr_no_err_stub_40
+    dq isr_no_err_stub_41
+    dq isr_no_err_stub_42
+    dq isr_no_err_stub_43
+    dq isr_no_err_stub_44
+    dq isr_no_err_stub_45
+    dq isr_no_err_stub_46
+    dq isr_no_err_stub_47

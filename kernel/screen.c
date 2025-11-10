@@ -90,6 +90,16 @@ void ScreenDisplay(const char* str, BYTE color)
     CursorPosition(cursorPos);
 }
 
+/**
+ * Format specifiers used are the ones from HAL9000:
+** %c character
+** %s null-terminated string
+** %d signed 32-bit decimal number
+** %u unsigned 32-bit decimal number
+** %x unsigned 32-bit hex number
+
+To display 64-bit values (QWORDs) use the UPPERCASE letter, i.e. %D signed 64-bit integer, %X unsigned 64-bit hex, etc.
+ */
 void LogSerialAndScreen(char* FormatBuffer, ...)
 {
     char logBuffer[LOG_BUF_MAX_SIZE];
@@ -102,4 +112,27 @@ void LogSerialAndScreen(char* FormatBuffer, ...)
 
     Log(logBuffer); // log through serial
     ScreenDisplay(logBuffer, 0x03); // display on screen - you will need to implement this part in `screen.c`
+}
+
+/**
+ * Format specifiers used are the ones from HAL9000:
+** %c character
+** %s null-terminated string
+** %d signed 32-bit decimal number
+** %u unsigned 32-bit decimal number
+** %x unsigned 32-bit hex number
+
+To display 64-bit values (QWORDs) use the UPPERCASE letter, i.e. %D signed 64-bit integer, %X unsigned 64-bit hex, etc.
+ */
+void FormattedLog(char* FormatBuffer, ...)
+{
+    char logBuffer[LOG_BUF_MAX_SIZE];
+    va_list va;
+
+    va_start(va, FormatBuffer);
+    cl_vsnprintf(logBuffer, LOG_BUF_MAX_SIZE, FormatBuffer, va);
+
+    // after call logBuffer will contain formatted buffer
+
+    Log(logBuffer); // log through serial
 }

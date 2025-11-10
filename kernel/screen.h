@@ -27,5 +27,5 @@ void PutChar(char C, int Pos);
 void PutString(char* String, int Pos);
 void PutStringLine(char* String, int Line);
 void LogSerialAndScreen(char* FormatBuffer, ...);
-
+void FormattedLog(char* FormatBuffer, ...);
 #endif // _SCREEN_H_

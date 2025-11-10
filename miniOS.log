@@ -1,24 +1,44 @@
-Logging initialized!Trap Info:
----------------
-stack pointer = 1FFFA0
-processor state pointer = 1FFF08
-ErrorCodeAvailable = 1
-InterruptIndex = 11
----------------
-Registers:
-rax=18 rbx=B400 rcx=1F
-rdx=20B020 rsi=20000 rdi=21B000
-rip=201511 rsp=1FFFD0 rbp=1FFFF0
-r8=8E r9=0 r10=0
-r11=0 r12=0 r13=0
-r14=0 r15=1FFF08
-cs=8 ss=10 fs=B gs=1 rflags=10006
-
-Stack (first 10 qwords) from interrupted RSP:
-|-Address-|-Value-|--|-Address-|-Value-|
-1FFFD0: 204000    |     1FFFD0: 204000
-1FFFC0: 8E    |     1FFFB0: 204000
-1FFFB0: 204000    |     1FFF90: 0
-1FFFA0: 0    |     1FFF70: 0
-1FFF90: 0    |     1FFF50: 16
----- trap done ----
+Logging initialized!
+PIC remapped (master=0x20, slave=0x28)
+All IRQs masked with 0xFF.
+IDT initialized.
+PIT initialized for 100 Hz (divisor=11931).
+PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
+Timer tick: 861889200
+Timer tick: 861889300
+Timer tick: 861889400
+Timer tick: 861889500
+Timer tick: 861889600
+Timer tick: 861889700
+Timer tick: 861889800
+Timer tick: 861889900
+Timer tick: 861890000
+Timer tick: 861890100
+Timer tick: 861890200
+Timer tick: 861890300
+sadTimer tick: 861890400
+dwTimer tick: 861890500
+Timer tick: 861890600
+Timer tick: 861890700
+Timer tick: 861890800
+Timer tick: 861890900
+Timer tick: 861891000
+Timer tick: 861891100
+Timer tick: 861891200
+Timer tick: 861891300
+Timer tick: 861891400
+Timer tick: 861891500
+Timer tick: 861891600
+Timer tick: 861891700
+Timer tick: 861891800
+inpTimer tick: 861891900
+utTimer tick: 861892000
+Timer tick: 861892100
+Timer tick: 861892200
+Timer tick: 861892300
+Timer tick: 861892400
+Timer tick: 861892500
+Timer tick: 861892600
+Timer tick: 861892700
+Timer tick: 861892800
+Timer tick: 861892900
