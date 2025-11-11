@@ -34,6 +34,7 @@ void __ExceptionHandler(
 void __IRQ0_TimerHandler();
 void __IRQ1_KeyboardHandler();
 void __InterpretCommand(char* cmd);
+void __InterpretKey(char ch);
 // ---------------------------------------------------------------------------------------------
 
 void idt_init() {
@@ -175,39 +176,48 @@ void __IRQ1_KeyboardHandler() {
             }
 
             if (!released && ch) {
-                if (ch == '\n' || ch == '\r' || ch == KEY_KP_ENTER)
-                {
-                    FormattedLog("recorded command = %s\n", BufferCLI);
-                    __InterpretCommand(BufferCLI);
-                    cl_flush(BufferCLI, MAX_COLUMNS);
-                }
-                // display printable char
-                else {
-                    //cl_snprintf(BufferCLI, MAX_COLUMNS, "%s%c", BufferCLI, ch);
-                    size_t len = cl_strlen(BufferCLI);
-                    if (len < MAX_COLUMNS - 1) {
-                        BufferCLI[len] = ch;
-                        BufferCLI[len + 1] = '\0';
-                    }
-                    LogSerialAndScreen("%c", ch);
-                }
+                __InterpretKey(ch);
             }
        }
     }
 }
 
 void __InterpretCommand(char* cmd) {
-    FormattedLog("[CMD_INTERPRETOR] COMMAND = %s\n", cmd);
+    FormattedLog("\n[CMD_INTERPRETOR] COMMAND = %s\n", cmd);
     if(cl_strcmp(cmd, "clear") == 0) {
         FormattedLog("[CMD_INTERPRETOR][CLEAR] Clear screen is triggered!!!!\n");
         ClearScreen();
     } else
     if(cl_strcmp(cmd, "time") == 0) {
-        FormattedLog("[CMD_INTERPRETOR][TIME] Yet to be implemented\n");
+        INT64 ClockTicksPassed = __rdtsc();
+        LogSerialAndScreen("\n[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = %D\n", ClockTicksPassed);
     } else 
     if(cl_strcmp(cmd, "edit") == 0) {
         FormattedLog("[CMD_INTERPRETOR][EDIT]Yet to be implemented\n");
     } else {
         FormattedLog("[CMD_INTERPRETOR][UNK]\'%s\' is an unknown command\n", cmd);
+    }
+}
+
+void __InterpretKey(char ch) {
+    if (ch == '\n' || ch == '\r' || ch == KEY_KP_ENTER)
+    {
+        __InterpretCommand(BufferCLI);
+        cl_flush(BufferCLI, MAX_COLUMNS);
+        EnterNewLine();
+    } else 
+    if (ch == KEY_BACKSPACE) {
+        ClearCharacter();
+        cl_backspace_buffer(BufferCLI); 
+    } 
+    // display printable char
+    else {
+        //cl_snprintf(BufferCLI, MAX_COLUMNS, "%s%c", BufferCLI, ch);
+        size_t len = cl_strlen(BufferCLI);
+        if (len < MAX_COLUMNS - 1) {
+            BufferCLI[len] = ch;
+            BufferCLI[len + 1] = '\0';
+        }
+        LogSerialAndScreen("%c", ch);
     }
 }

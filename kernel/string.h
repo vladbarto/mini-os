@@ -138,6 +138,11 @@ cl_flush (
     char* string,
     DWORD length;
 );
+
+void 
+cl_backspace_buffer (
+    BYTE* string
+);
 #define atoi32(addr,buf,base)       atoi((addr),(buf),(base),FALSE)
 #define atoi64(addr,buf,base)       atoi((addr),(buf),(base),TRUE)
 

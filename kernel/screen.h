@@ -16,6 +16,7 @@
 #define WHITE_8BIT 0x0F
 #define GREEN_BRIGHT_8BIT 0x0A
 #define PINK_MAGENTA_8BIT 0x0D
+#define CYAN_8BIT 0x0B
 // ----------------------------------------
 
 #pragma pack(push)
@@ -32,7 +33,10 @@ extern BYTE BufferCLI[MAX_COLUMNS];
 void HelloBoot();
 
 void SetColor(BYTE Color);
+void ScreenDisplay(const char* str, BYTE color);
 void ClearScreen();
+void ClearCharacter();
+void EnterNewLine();
 void PutChar(char C, int Pos);
 void PutString(char* String, int Pos);
 void PutStringLine(char* String, int Line);

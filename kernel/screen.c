@@ -2,6 +2,16 @@
 
 static PSCREEN gVideo = (PSCREEN)(0x000B8000);
 
+WORD GetCursorPosition(void)
+{
+    WORD pos = 0;
+    __outbyte(0x3D4, 0x0F);
+    pos |= __inbyte(0x3D5);
+    __outbyte(0x3D4, 0x0E);
+    pos |= ((WORD)__inbyte(0x3D5)) << 8;
+    return pos;
+}
+
 void CursorMove(int row, int col)
 {
     unsigned short location = (row * MAX_COLUMNS) + col;       /* Short is a 16bit type , the formula is used here*/
@@ -46,7 +56,7 @@ void HelloBoot()
 		gVideo[i].color = GREEN_BRIGHT_8BIT;
 		gVideo[i].c = boot[i];
 	}
-    // CursorPosition(i);
+
     CursorMove(1, 0);
 }
 
@@ -62,6 +72,27 @@ void ClearScreen()
     CursorMove(0, 0);
 }
 
+void ClearCharacter() {
+    // LogSerialAndScreen("%d\n", GetCursorPosition());
+    WORD cursor = GetCursorPosition();
+    if(cursor%MAX_COLUMNS != 0) cursor--;
+    gVideo[cursor].color = BLACK_8BIT;
+    gVideo[cursor].c = ' ';
+    CursorPosition(cursor);
+}
+
+/**
+ * Called if 'Enter' Keyboard Interrupt occurs
+ */
+void EnterNewLine() {
+    WORD cursor = GetCursorPosition();
+    if(cursor < MAX_LINES * MAX_COLUMNS - MAX_COLUMNS)
+    {
+        CursorPosition(cursor + MAX_COLUMNS - cursor%80);
+        ScreenDisplay("$ ", CYAN_8BIT);
+    }
+    else ClearScreen();
+}
 
 void ScreenDisplay(const char* str, BYTE color)
 {

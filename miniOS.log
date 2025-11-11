@@ -4,42 +4,35 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
-ellorecorded command = ello
-COMMAND = ello
-'ello' is an unknown command
-hellorecorded command = hello
-COMMAND = hello
-'hello' is an unknown command
-textrecorded command = text
-COMMAND = text
-'text' is an unknown command
-timerecorded command = time
-COMMAND = time
-Yet to be implemented
-editrecorded command = edit
-COMMAND = edit
-Yet to be implemented
-clearrecorded command = clear
-COMMAND = clear
-Clear screen is triggered!!!!
-hellorecorded command = hello
-COMMAND = hello
-'hello' is an unknown command
-wellrecorded command = well
-COMMAND = well
-'well' is an unknown command
-this is oodddrecorded command = this is ooddd
-COMMAND = this is ooddd
-'this is ooddd' is an unknown command
-goodrecorded command = good
-COMMAND = good
-'good' is an unknown command
-corecorded command = co
-COMMAND = co
-'co' is an unknown command
-clearrecorded command = clear
-COMMAND = clear
-Clear screen is triggered!!!!
-hellorecorded command = hello
-COMMAND = hello
-'hello' is an unknown command
+
+[CMD_INTERPRETOR] COMMAND = 
+[CMD_INTERPRETOR][UNK]'' is an unknown command
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 26156093275
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 33504401275
+clear
+[CMD_INTERPRETOR] COMMAND = clear
+[CMD_INTERPRETOR][CLEAR] Clear screen is triggered!!!!
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 40317365275
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 43330625273
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 47157705277
+claerear
+[CMD_INTERPRETOR] COMMAND = clear
+[CMD_INTERPRETOR][CLEAR] Clear screen is triggered!!!!
+exit
+[CMD_INTERPRETOR] COMMAND = exit
+[CMD_INTERPRETOR][UNK]'exit' is an unknown command

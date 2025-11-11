@@ -868,4 +868,12 @@ cl_flush (
     for(DWORD i = 0; i < length; i++) string[i] = '\0';
 }
 
+void 
+cl_backspace_buffer (
+    BYTE* string
+) {
+    DWORD length = cl_strlen(string);
+    if(length) string[length-1] = '\0';
+}
+
 
