@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "interrupt.h": "c"
+        "interrupt.h": "c",
+        "screen.h": "c",
+        "string.h": "c"
     }
 }

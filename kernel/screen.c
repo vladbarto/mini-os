@@ -43,10 +43,11 @@ void HelloBoot()
 
 	for (i = 0; (i < len) && (i < MAX_OFFSET); i++)
 	{
-		gVideo[i].color = 10;
+		gVideo[i].color = GREEN_BRIGHT_8BIT;
 		gVideo[i].c = boot[i];
 	}
-    CursorPosition(i);
+    // CursorPosition(i);
+    CursorMove(1, 0);
 }
 
 void ClearScreen()
@@ -55,7 +56,7 @@ void ClearScreen()
 
     for (i = 0; i < MAX_OFFSET; i++)
     {
-        gVideo[i].color = 10;
+        gVideo[i].color = GREEN_BRIGHT_8BIT;
         gVideo[i].c = ' ';
     }
     CursorMove(0, 0);
@@ -111,7 +112,7 @@ void LogSerialAndScreen(char* FormatBuffer, ...)
     // after call logBuffer will contain formatted buffer
 
     Log(logBuffer); // log through serial
-    ScreenDisplay(logBuffer, 0x03); // display on screen - you will need to implement this part in `screen.c`
+    ScreenDisplay(logBuffer, PINK_MAGENTA_8BIT); // display on screen - you will need to implement this part in `screen.c`
 }
 
 /**
@@ -135,4 +136,12 @@ void FormattedLog(char* FormatBuffer, ...)
     // after call logBuffer will contain formatted buffer
 
     Log(logBuffer); // log through serial
+}
+
+BYTE BufferCLI[MAX_COLUMNS] = {0};
+/** 
+ Initializes command buffer and edit-mode buffer.
+*/
+void CLI_init() {
+    for(int i = 0; i < MAX_COLUMNS; i++) BufferCLI[i] = (BYTE) 0;
 }

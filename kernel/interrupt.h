@@ -8,6 +8,7 @@
 #include "screen.h"
 #include "ps2.h"
 #include "scancode.h"
+#include "string.h"
 
 #define IDT_MAX_DESCRIPTORS 48
 #define GDT_OFFSET_KERNEL_CODE 8

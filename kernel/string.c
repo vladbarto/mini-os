@@ -230,8 +230,8 @@ cl_atoi(
 
 int
 cl_strcmp(
-    char* str1,
-    char* str2
+    const char* str1,
+    const char* str2
 )
 {
     DWORD i = 0;
@@ -858,6 +858,14 @@ cl_strtrim(
         // shift all characters to the left
         cl_memmove(string, &string[startIndex], lengthAfterRightTrim);
     }
+}
+
+void 
+cl_flush (
+    char* string,
+    DWORD length
+) {
+    for(DWORD i = 0; i < length; i++) string[i] = '\0';
 }
 
 
