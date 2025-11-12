@@ -51,7 +51,7 @@ typedef enum _KEYCODE
 	KEY_Z = 'z',
 
 	KEY_RETURN = '\r',
-	KEY_ESCAPE = 0x1001,
+	KEY_ESCAPE = 0x1 , //0x1001, -- this value is wrongly documented on OSDEV and in discrepancy with scancode.c std array
 	KEY_BACKSPACE = '\b',
 
 	// Arrow keys ////////////////////////

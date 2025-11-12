@@ -62,6 +62,7 @@ extern void* isr_stub_table[];
 extern idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
 extern idtr_t idtr;
 extern volatile uint64_t g_TickCount;
+extern BOOL EditMode;
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init(void);

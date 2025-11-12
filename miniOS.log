@@ -4,16 +4,6 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
-im
-[CMD_INTERPRETOR] COMMAND = im
-[CMD_INTERPRETOR][UNK]'im' is an unknown command
-time
-[CMD_INTERPRETOR] COMMAND = time
 
-[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 10548713271
-12/11/2025 14:ß11:1
-time
-[CMD_INTERPRETOR] COMMAND = time
-
-[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 16130713274
-12/11/2025 14:ß11:3
+[CMD_INTERPRETOR] COMMAND = 
+[CMD_INTERPRETOR][UNK] '' is an unknown command

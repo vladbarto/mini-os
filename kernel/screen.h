@@ -5,6 +5,7 @@
 #include "main.h"
 #include "string.h"
 #include "logging.h"
+#include "scancode.h"
 
 #define MAX_LINES       25
 #define MAX_COLUMNS     80
@@ -37,6 +38,7 @@ void ScreenDisplay(const char* str, BYTE color);
 void ClearScreen();
 void ClearCharacter();
 void EnterNewLine();
+void MoveTextCursor(WORD Key);
 void PutChar(char C, int Pos);
 void PutString(char* String, int Pos);
 void PutStringLine(char* String, int Line);

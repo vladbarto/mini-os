@@ -73,7 +73,6 @@ void ClearScreen()
 }
 
 void ClearCharacter() {
-    // LogSerialAndScreen("%d\n", GetCursorPosition());
     WORD cursor = GetCursorPosition();
     if(cursor%MAX_COLUMNS != 0) cursor--;
     gVideo[cursor].color = BLACK_8BIT;
@@ -92,6 +91,32 @@ void EnterNewLine() {
         ScreenDisplay("$ ", CYAN_8BIT);
     }
     else ClearScreen();
+}
+
+/**
+ * Based on provided arrow (up, down, left or right) move the cursor accordingly.
+ */
+void MoveTextCursor(WORD Key) {
+    WORD CurrentCursorPosition = GetCursorPosition();
+    if (KEY_UP == Key) {
+        INT16 Offset = CurrentCursorPosition - MAX_COLUMNS;
+        if ( Offset >= 0) {
+            CursorPosition(CurrentCursorPosition - MAX_COLUMNS);
+        }
+    } else if (KEY_DOWN == Key) {
+        INT16 Offset = CurrentCursorPosition + MAX_COLUMNS;
+        if ( Offset <= MAX_LINES * MAX_COLUMNS) {
+            CursorPosition(CurrentCursorPosition + MAX_COLUMNS);
+        }
+    } else if (KEY_LEFT == Key) {
+        if ( CurrentCursorPosition - 1 >= 0) {
+            CursorPosition(CurrentCursorPosition - 1);
+        }
+    } else if (KEY_RIGHT == Key) {
+        if ( CurrentCursorPosition + 1 <= MAX_LINES * MAX_COLUMNS) {
+            CursorPosition(CurrentCursorPosition + 1);
+        }
+    } 
 }
 
 void ScreenDisplay(const char* str, BYTE color)

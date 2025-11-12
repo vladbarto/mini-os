@@ -6,9 +6,8 @@ idt_entry_t idt[256];
 idtr_t idtr;
 
 volatile uint64_t g_TickCount = 0;
-// extern const char* _kkybrd_scancode_std; // normal scancode-to-char table
-// extern const char* _kkybrd_scancode_ext; // extended scancode-to-char table
 static uint8_t kbd_ext_state = 0; // 0 = none, 0xE0 or 0xE1 if prefix seen
+BOOL EditMode = false;
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     idt_entry_t* descriptor = &idt[vector];
@@ -33,8 +32,7 @@ void __ExceptionHandler(
 );
 void __IRQ0_TimerHandler();
 void __IRQ1_KeyboardHandler();
-#define CURRENT_YEAR        2023                            // Change this each year!
-int century_register = 0x00;                                // Set by ACPI table parsing code if possible
+
 unsigned char second;
 unsigned char minute;
 unsigned char hour;
@@ -49,7 +47,7 @@ int __get_update_in_progress_flag();
 unsigned char __get_RTC_register(int reg);
 void __read_rtc();
 void __InterpretCommand(char* cmd);
-void __InterpretKey(char ch);
+void __InterpretKey(WORD ch);
 // ---------------------------------------------------------------------------------------------
 
 void idt_init() {
@@ -182,7 +180,7 @@ void __IRQ1_KeyboardHandler() {
         } else {
             bool released = (sc & 0x80) != 0; // isKeyReleased
             uint8_t sc_masked = sc & 0x7F;
-            char ch = 0;
+            WORD ch = 0x0000;
             if (kbd_ext_state) {
                 ch = _kkybrd_scancode_ext[sc_masked];
                 kbd_ext_state = 0;
@@ -209,32 +207,41 @@ void __InterpretCommand(char* cmd) {
         __read_rtc();
     } else 
     if(cl_strcmp(cmd, "edit") == 0) {
-        FormattedLog("[CMD_INTERPRETOR][EDIT]Yet to be implemented\n");
+        FormattedLog("[CMD_INTERPRETOR][EDIT] Edit mode enabled.\n");
+        EditMode = true;
+        // ClearScreen();
     } else {
-        LogSerialAndScreen("[CMD_INTERPRETOR][UNK]\'%s\' is an unknown command\n", cmd);
+        LogSerialAndScreen("[CMD_INTERPRETOR][UNK] \'%s\' is an unknown command\n", cmd);
     }
 }
 
-void __InterpretKey(char ch) {
+void __InterpretKey(WORD ch) {
+    // extended char
     if (ch == '\n' || ch == '\r' || ch == KEY_KP_ENTER)
     {
         __InterpretCommand(BufferCLI);
         cl_flush(BufferCLI, MAX_COLUMNS);
         EnterNewLine();
-    } else 
-    if (ch == KEY_BACKSPACE) {
+    } else if (ch == KEY_BACKSPACE) {
         ClearCharacter();
         cl_backspace_buffer(BufferCLI); 
-    } 
+    } else if (ch == KEY_ESCAPE) {
+        if(EditMode) {
+            EditMode = false;
+            FormattedLog("Edit mode exitted.\n");
+        }
+    } else if (KEY_UP == ch || KEY_DOWN == ch || KEY_LEFT == ch || KEY_RIGHT == ch) {
+        MoveTextCursor(ch);
+    }
     // display printable char
     else {
-        //cl_snprintf(BufferCLI, MAX_COLUMNS, "%s%c", BufferCLI, ch);
+        BYTE OneByteChar = (BYTE) 0xFF & ch;
         size_t len = cl_strlen(BufferCLI);
         if (len < MAX_COLUMNS - 1) {
-            BufferCLI[len] = ch;
+            BufferCLI[len] = OneByteChar;
             BufferCLI[len + 1] = '\0';
         }
-        LogSerialAndScreen("%c", ch);
+        LogSerialAndScreen("%c", OneByteChar);
     }
 }
 
@@ -296,5 +303,5 @@ void __read_rtc(void) {
         hour = ((hour & 0x7F) + 12) % 24;
 
 
-    LogSerialAndScreen("%u/%u/%u %u:%c%u:%u\n", day, month, year + 2000, hour, (minute<10)?0:'',minute, second);
+    LogSerialAndScreen("%u/%u/%u %u:%c%u:%u\n", day, month, year + 2000, hour, (minute<10)?'0':0,minute, second);
 }
