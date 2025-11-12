@@ -33,6 +33,21 @@ void __ExceptionHandler(
 );
 void __IRQ0_TimerHandler();
 void __IRQ1_KeyboardHandler();
+#define CURRENT_YEAR        2023                            // Change this each year!
+int century_register = 0x00;                                // Set by ACPI table parsing code if possible
+unsigned char second;
+unsigned char minute;
+unsigned char hour;
+unsigned char day;
+unsigned char month;
+unsigned int year;
+enum {
+      cmos_address = 0x70,
+      cmos_data    = 0x71
+};
+int __get_update_in_progress_flag();
+unsigned char __get_RTC_register(int reg);
+void __read_rtc();
 void __InterpretCommand(char* cmd);
 void __InterpretKey(char ch);
 // ---------------------------------------------------------------------------------------------
@@ -191,11 +206,12 @@ void __InterpretCommand(char* cmd) {
     if(cl_strcmp(cmd, "time") == 0) {
         INT64 ClockTicksPassed = __rdtsc();
         LogSerialAndScreen("\n[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = %D\n", ClockTicksPassed);
+        __read_rtc();
     } else 
     if(cl_strcmp(cmd, "edit") == 0) {
         FormattedLog("[CMD_INTERPRETOR][EDIT]Yet to be implemented\n");
     } else {
-        FormattedLog("[CMD_INTERPRETOR][UNK]\'%s\' is an unknown command\n", cmd);
+        LogSerialAndScreen("[CMD_INTERPRETOR][UNK]\'%s\' is an unknown command\n", cmd);
     }
 }
 
@@ -220,4 +236,65 @@ void __InterpretKey(char ch) {
         }
         LogSerialAndScreen("%c", ch);
     }
+}
+
+int __get_update_in_progress_flag() {
+      __outbyte(cmos_address, 0x0A);
+      return (__inbyte(cmos_data) & 0x80);
+}
+
+unsigned char __get_RTC_register(int reg) {
+      __outbyte(cmos_address, reg);
+      return __inbyte(cmos_data);
+}
+
+void __read_rtc(void) {
+    unsigned char last_second, last_minute, last_hour, last_day, last_month, last_year;
+    unsigned char registerB;
+
+    while (__get_update_in_progress_flag());
+    second = __get_RTC_register(0x00);
+    minute = __get_RTC_register(0x02);
+    hour   = __get_RTC_register(0x04);
+    day    = __get_RTC_register(0x07);
+    month  = __get_RTC_register(0x08);
+    year   = __get_RTC_register(0x09) & 0xFF;
+    
+    do {
+        last_second  = second;
+        last_minute  = minute;
+        last_hour    = hour;
+        last_day     = day;
+        last_month   = month;
+        last_year    = year;
+
+        while (__get_update_in_progress_flag());
+        second = __get_RTC_register(0x00);
+        minute = __get_RTC_register(0x02);
+        hour   = __get_RTC_register(0x04);
+        day    = __get_RTC_register(0x07);
+        month  = __get_RTC_register(0x08);
+        year   = __get_RTC_register(0x09) & 0xFF;
+
+    } while ((last_second != second) || (last_minute != minute) || (last_hour != hour) ||
+             (last_day != day) || (last_month != month) || (last_year != year));
+
+    registerB = __get_RTC_register(0x0B);
+
+    // BCD to binary
+    if (!(registerB & 0x04)) {
+        second = ((second >> 4) * 10) + (second & 0x0F);
+        minute = ((minute >> 4) * 10) + (minute & 0x0F);
+        hour   = (((hour >> 4) & 0x07) * 10) + (hour & 0x0F) | (hour & 0x80);
+        day    = ((day >> 4) * 10) + (day & 0x0F);
+        month  = ((month >> 4) * 10) + (month & 0x0F);
+        year   = ((year >> 4) * 10) + (year & 0x0F);
+    }
+
+    // Convert to 24h if needed
+    if (!(registerB & 0x02) && (hour & 0x80))
+        hour = ((hour & 0x7F) + 12) % 24;
+
+
+    LogSerialAndScreen("%u/%u/%u %u:%c%u:%u\n", day, month, year + 2000, hour, (minute<10)?0:'',minute, second);
 }
