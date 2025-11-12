@@ -209,9 +209,10 @@ void __InterpretCommand(char* cmd) {
     if(cl_strcmp(cmd, "edit") == 0) {
         FormattedLog("[CMD_INTERPRETOR][EDIT] Edit mode enabled.\n");
         EditMode = true;
-        // ClearScreen();
+        SaveScreen(MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, MainScreenCursorPosition);
+        ClearScreen();
     } else {
-        LogSerialAndScreen("[CMD_INTERPRETOR][UNK] \'%s\' is an unknown command\n", cmd);
+        LogSerialAndScreen("\n[CMD_INTERPRETOR][UNK] \'%s\' is an unknown command\n", cmd);
     }
 }
 
@@ -229,6 +230,7 @@ void __InterpretKey(WORD ch) {
         if(EditMode) {
             EditMode = false;
             FormattedLog("Edit mode exitted.\n");
+            RestoreScreen(MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, MainScreenCursorPosition);
         }
     } else if (KEY_UP == ch || KEY_DOWN == ch || KEY_LEFT == ch || KEY_RIGHT == ch) {
         MoveTextCursor(ch);

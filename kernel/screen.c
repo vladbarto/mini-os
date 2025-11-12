@@ -2,6 +2,11 @@
 
 static PSCREEN gVideo = (PSCREEN)(0x000B8000);
 
+// ------------ PRIVATE HELPER FUNCTIONS' SIGNATURES DECLARED HERE ----------
+void* __memcpy(void *dest, const void *src, size_t n);
+void* __memset(void *blk, int c, size_t n);
+// -------------------------------------------------------------------
+
 WORD GetCursorPosition(void)
 {
     WORD pos = 0;
@@ -195,9 +200,68 @@ void FormattedLog(char* FormatBuffer, ...)
 }
 
 BYTE BufferCLI[MAX_COLUMNS] = {0};
+BYTE MainScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2] = {0};
+QWORD* MainScreenCursorPosition;
 /** 
  Initializes command buffer and edit-mode buffer.
 */
 void CLI_init() {
     for(int i = 0; i < MAX_COLUMNS; i++) BufferCLI[i] = (BYTE) 0;
+    //*MainScreenCursorPosition = 0x0000;
+}
+
+/**
+ * Saves the screen of main mode storing directly video memory
+ * @Param VideoMemoryBuffer - if NULL don't store the previous content
+ * @Param BufferSize - 20x80
+ * @Param CursorPosition - Last known cursor position when state was saved
+ */
+void 
+SaveScreen(
+    void*     VideoMemoryBuffer,
+    DWORD     BufferSize,
+    QWORD*    CursorPosition
+) {
+    if(NULL != VideoMemoryBuffer)
+        __memcpy(VideoMemoryBuffer, gVideo, BufferSize);
+    *CursorPosition = GetCursorPosition();
+}
+
+/**
+ * Restores the screen of main mode writing directly the previously saved video memory
+ * @Param VideoMemoryBuffer - if NULL empty screen to be restored
+ * @Param BufferSize - 20x80
+ * @Param CursorPosition - restore last known cursor position when state was saved
+ */
+void RestoreScreen(
+    void*   VideoMemoryBuffer,
+    DWORD   BufferSize,
+    QWORD*  cursorPosition
+) {
+    if(NULL != VideoMemoryBuffer)
+        __memcpy(gVideo, VideoMemoryBuffer, BufferSize);
+    CursorPosition(*cursorPosition);
+}
+// -------------- PRIVATE HELPER FUNCTIONS IMPLEMENTATION -------------
+// Source - https://stackoverflow.com/a
+// Posted by lost_in_the_source
+// Retrieved 2025-11-12, License - CC BY-SA 3.0
+
+void* __memcpy(void *dest, const void *src, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; ++i)
+        ((unsigned char *) dest)[i] = ((unsigned char *) src)[i];
+
+    return dest;
+}
+void* __memset(void *blk, int c, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; ++i)
+        ((unsigned char *) blk)[i] = c;
+
+    return blk;
 }

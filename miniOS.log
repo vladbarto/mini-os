@@ -4,6 +4,34 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
+d
+[CMD_INTERPRETOR] COMMAND = d
 
-[CMD_INTERPRETOR] COMMAND = 
-[CMD_INTERPRETOR][UNK] '' is an unknown command
+[CMD_INTERPRETOR][UNK] 'd' is an unknown command
+edit
+[CMD_INTERPRETOR] COMMAND = edit
+[CMD_INTERPRETOR][EDIT] Edit mode enabled.
+Trap Info:
+---------------
+stack pointer = 1FFDB0
+processor state pointer = 1FFD18
+ErrorCodeAvailable = 1
+InterruptIndex = 13
+---------------
+Registers:
+rax=404040404040404 rbx=B400 rcx=20D0E0
+rdx=146 rsi=20000 rdi=21B000
+rip=202F71 rsp=1FFDE0 rbp=1FFE00
+r8=FA0 r9=1FFE18 r10=0
+r11=0 r12=0 r13=0
+r14=0 r15=0
+cs=8 ss=10 fs=10 gs=10 rflags=10002
+
+Stack (first 10 qwords) from interrupted RSP:
+|-Address-|-Value-|--|-Address-|-Value-|
+1FFDE0: 20D0E0    |     1FFDE0: 20D0E0
+1FFDD0: FA0    |     1FFDC0: 1FFE00
+1FFDC0: 1FFE00    |     1FFDA0: 206278
+1FFDB0: 1FFE00    |     1FFD80: 0
+1FFDA0: 206278    |     1FFD60: D00003D40F012000
+---- trap done ----

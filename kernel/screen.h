@@ -30,6 +30,8 @@ typedef struct _SCREEN
 #pragma pack(pop)
 
 extern BYTE BufferCLI[MAX_COLUMNS];
+extern BYTE MainScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2];
+extern QWORD* MainScreenCursorPosition;
 
 void HelloBoot();
 
@@ -45,4 +47,28 @@ void PutStringLine(char* String, int Line);
 void LogSerialAndScreen(char* FormatBuffer, ...);
 void FormattedLog(char* FormatBuffer, ...);
 void CLI_init();
+/**
+ * Saves the screen of main mode storing directly video memory
+ * @Param MainScreenVideoMemoryBuffer - if NULL don't store the previous content
+ * @Param BufferSize - 20x80
+ * @Param CursorPosition - Last known cursor position when state was saved
+ */
+void 
+SaveScreen(
+    void*     VideoMemoryBuffer,
+    DWORD     BufferSize,
+    QWORD*    CursorPosition
+);
+
+/**
+ * Restores the screen of main mode writing directly the previously saved video memory
+ * @Param VideoMemoryBuffer - if NULL empty screen to be restored
+ * @Param BufferSize - 20x80
+ * @Param cursorPosition - restore last known cursor position when state was saved
+ */
+void RestoreScreen(
+    void*   VideoMemoryBuffer,
+    DWORD   BufferSize,
+    QWORD*  cursorPosition
+);
 #endif // _SCREEN_H_
