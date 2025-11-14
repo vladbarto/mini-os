@@ -128,6 +128,14 @@ cl_strcmp(
     const char* str2
 );
 
+
+void
+cl_strncpy(
+    char* dst,
+    char* src,
+    DWORD length
+);
+
 DWORD
 cl_strlen(
     char* str

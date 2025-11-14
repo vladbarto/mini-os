@@ -25,6 +25,7 @@ void KernelMain()
     PS2_keyboard_init();
     
     CLI_init();
+
     PIC_unmask(0); // IRQ0 = timer
     PIC_unmask(1); // IRQ1 = keyboard
 

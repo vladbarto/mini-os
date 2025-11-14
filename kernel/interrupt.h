@@ -72,4 +72,6 @@ void InterruptCommonHandler(
     uint8_t                   InterruptIndex, // [0x0, 0xFF]
     COMPLETE_PROCESSOR_STATE* ProcessorState // Pointer to a structure which contains trap context (see above trap frame dump example
 );
+
+void init_history();
 #endif // _INTERRUPT_H_

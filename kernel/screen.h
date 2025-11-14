@@ -31,7 +31,11 @@ typedef struct _SCREEN
 
 extern BYTE BufferCLI[MAX_COLUMNS];
 extern BYTE MainScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2];
-extern QWORD* MainScreenCursorPosition;
+extern BYTE EditScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2];
+extern QWORD MainScreenCursorPosition;
+extern QWORD EditScreenCursorPosition;
+extern BOOL EditScreenInitialized;
+extern BOOL CapsLockOn;
 
 void HelloBoot();
 
@@ -39,7 +43,7 @@ void SetColor(BYTE Color);
 void ScreenDisplay(const char* str, BYTE color);
 void ClearScreen();
 void ClearCharacter();
-void EnterNewLine();
+void EnterNewLine(BYTE prompt);
 void MoveTextCursor(WORD Key);
 void PutChar(char C, int Pos);
 void PutString(char* String, int Pos);

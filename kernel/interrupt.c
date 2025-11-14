@@ -200,19 +200,29 @@ void __InterpretCommand(char* cmd) {
     if(cl_strcmp(cmd, "clear") == 0) {
         FormattedLog("[CMD_INTERPRETOR][CLEAR] Clear screen is triggered!!!!\n");
         ClearScreen();
+        EnterNewLine(1);
     } else
     if(cl_strcmp(cmd, "time") == 0) {
         INT64 ClockTicksPassed = __rdtsc();
         LogSerialAndScreen("\n[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = %D\n", ClockTicksPassed);
         __read_rtc();
+        EnterNewLine(1);
     } else 
     if(cl_strcmp(cmd, "edit") == 0) {
         FormattedLog("[CMD_INTERPRETOR][EDIT] Edit mode enabled.\n");
         EditMode = true;
-        SaveScreen(MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, MainScreenCursorPosition);
-        ClearScreen();
+        EnterNewLine(1);
+        SaveScreen((void*)MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, &MainScreenCursorPosition);
+        if (!EditScreenInitialized) {
+            ClearScreen();
+            LogSerialAndScreen("Edit Mode\n");
+            EditScreenInitialized = true;
+        } else {
+            RestoreScreen((void*)EditScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, &EditScreenCursorPosition);
+        }
     } else {
         LogSerialAndScreen("\n[CMD_INTERPRETOR][UNK] \'%s\' is an unknown command\n", cmd);
+        EnterNewLine(1);
     }
 }
 
@@ -220,28 +230,43 @@ void __InterpretKey(WORD ch) {
     // extended char
     if (ch == '\n' || ch == '\r' || ch == KEY_KP_ENTER)
     {
-        __InterpretCommand(BufferCLI);
-        cl_flush(BufferCLI, MAX_COLUMNS);
-        EnterNewLine();
+        if (!EditMode) {
+            __InterpretCommand(BufferCLI);
+            cl_flush(BufferCLI, MAX_COLUMNS);
+        } else {
+            EnterNewLine(0);
+        }
     } else if (ch == KEY_BACKSPACE) {
         ClearCharacter();
         cl_backspace_buffer(BufferCLI); 
-    } else if (ch == KEY_ESCAPE) {
-        if(EditMode) {
+    } else if (EditScreenInitialized && ch == KEY_ESCAPE) {
+        if (EditMode) {
             EditMode = false;
             FormattedLog("Edit mode exitted.\n");
-            RestoreScreen(MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, MainScreenCursorPosition);
+            SaveScreen((void*)EditScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, &EditScreenCursorPosition);
+            RestoreScreen((void*)MainScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, &MainScreenCursorPosition);
         }
     } else if (KEY_UP == ch || KEY_DOWN == ch || KEY_LEFT == ch || KEY_RIGHT == ch) {
-        MoveTextCursor(ch);
+        if (EditMode) {
+            MoveTextCursor(ch);
+        }
+    } else if (KEY_CAPSLOCK == ch) {
+        CapsLockOn = !CapsLockOn;
     }
     // display printable char
     else {
         BYTE OneByteChar = (BYTE) 0xFF & ch;
-        size_t len = cl_strlen(BufferCLI);
-        if (len < MAX_COLUMNS - 1) {
-            BufferCLI[len] = OneByteChar;
-            BufferCLI[len + 1] = '\0';
+        if(CapsLockOn == true) {
+            if(OneByteChar >= 'a' && OneByteChar <= 'z')
+                OneByteChar -= 'a' - 'A';
+        }
+        if(!EditMode) {
+            // only then do accumulate chars
+            size_t len = cl_strlen(BufferCLI);
+            if (len < MAX_COLUMNS - 1) {
+                BufferCLI[len] = OneByteChar;
+                BufferCLI[len + 1] = '\0';
+            }
         }
         LogSerialAndScreen("%c", OneByteChar);
     }
@@ -305,5 +330,5 @@ void __read_rtc(void) {
         hour = ((hour & 0x7F) + 12) % 24;
 
 
-    LogSerialAndScreen("%u/%u/%u %u:%c%u:%u\n", day, month, year + 2000, hour, (minute<10)?'0':0,minute, second);
+    LogSerialAndScreen("%u/%u/%u %u:%c%u:%c%u\n", day, month, year + 2000, hour, (minute<10)?'0':0,minute, (second<10)?'0':0, second);
 }

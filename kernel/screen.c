@@ -88,12 +88,12 @@ void ClearCharacter() {
 /**
  * Called if 'Enter' Keyboard Interrupt occurs
  */
-void EnterNewLine() {
+void EnterNewLine(BYTE prompt) {
     WORD cursor = GetCursorPosition();
     if(cursor < MAX_LINES * MAX_COLUMNS - MAX_COLUMNS)
     {
         CursorPosition(cursor + MAX_COLUMNS - cursor%80);
-        ScreenDisplay("$ ", CYAN_8BIT);
+        if(prompt) ScreenDisplay("$ ", CYAN_8BIT);
     }
     else ClearScreen();
 }
@@ -201,13 +201,18 @@ void FormattedLog(char* FormatBuffer, ...)
 
 BYTE BufferCLI[MAX_COLUMNS] = {0};
 BYTE MainScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2] = {0};
-QWORD* MainScreenCursorPosition;
+BYTE EditScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2] = {0};
+QWORD MainScreenCursorPosition = 0;
+QWORD EditScreenCursorPosition = 0;
+BOOL EditScreenInitialized = false;
+BOOL CapsLockOn = false;
+
 /** 
  Initializes command buffer and edit-mode buffer.
 */
 void CLI_init() {
     for(int i = 0; i < MAX_COLUMNS; i++) BufferCLI[i] = (BYTE) 0;
-    //*MainScreenCursorPosition = 0x0000;
+    CapsLockOn = false;
 }
 
 /**
