@@ -122,6 +122,35 @@ cl_vsnprintf(
     va_list     argptr
 );
 
+int
+cl_strcmp(
+    const char* str1,
+    const char* str2
+);
+
+
+void
+cl_strncpy(
+    char* dst,
+    char* src,
+    DWORD length
+);
+
+DWORD
+cl_strlen(
+    char* str
+);
+
+void 
+cl_flush (
+    char* string,
+    DWORD length;
+);
+
+void 
+cl_backspace_buffer (
+    BYTE* string
+);
 #define atoi32(addr,buf,base)       atoi((addr),(buf),(base),FALSE)
 #define atoi64(addr,buf,base)       atoi((addr),(buf),(base),TRUE)
 

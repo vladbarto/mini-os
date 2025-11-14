@@ -8,6 +8,7 @@
 #include "screen.h"
 #include "ps2.h"
 #include "scancode.h"
+#include "string.h"
 
 #define IDT_MAX_DESCRIPTORS 48
 #define GDT_OFFSET_KERNEL_CODE 8
@@ -61,6 +62,7 @@ extern void* isr_stub_table[];
 extern idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
 extern idtr_t idtr;
 extern volatile uint64_t g_TickCount;
+extern BOOL EditMode;
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init(void);
@@ -70,4 +72,6 @@ void InterruptCommonHandler(
     uint8_t                   InterruptIndex, // [0x0, 0xFF]
     COMPLETE_PROCESSOR_STATE* ProcessorState // Pointer to a structure which contains trap context (see above trap frame dump example
 );
+
+void init_history();
 #endif // _INTERRUPT_H_

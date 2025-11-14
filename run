@@ -1,0 +1,1 @@
+bochs -q -f floppy_linux.bxrc

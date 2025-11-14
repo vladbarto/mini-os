@@ -2,6 +2,21 @@
 
 static PSCREEN gVideo = (PSCREEN)(0x000B8000);
 
+// ------------ PRIVATE HELPER FUNCTIONS' SIGNATURES DECLARED HERE ----------
+void* __memcpy(void *dest, const void *src, size_t n);
+void* __memset(void *blk, int c, size_t n);
+// -------------------------------------------------------------------
+
+WORD GetCursorPosition(void)
+{
+    WORD pos = 0;
+    __outbyte(0x3D4, 0x0F);
+    pos |= __inbyte(0x3D5);
+    __outbyte(0x3D4, 0x0E);
+    pos |= ((WORD)__inbyte(0x3D5)) << 8;
+    return pos;
+}
+
 void CursorMove(int row, int col)
 {
     unsigned short location = (row * MAX_COLUMNS) + col;       /* Short is a 16bit type , the formula is used here*/
@@ -43,10 +58,11 @@ void HelloBoot()
 
 	for (i = 0; (i < len) && (i < MAX_OFFSET); i++)
 	{
-		gVideo[i].color = 10;
+		gVideo[i].color = GREEN_BRIGHT_8BIT;
 		gVideo[i].c = boot[i];
 	}
-    CursorPosition(i);
+
+    CursorMove(1, 0);
 }
 
 void ClearScreen()
@@ -55,12 +71,58 @@ void ClearScreen()
 
     for (i = 0; i < MAX_OFFSET; i++)
     {
-        gVideo[i].color = 10;
+        gVideo[i].color = GREEN_BRIGHT_8BIT;
         gVideo[i].c = ' ';
     }
     CursorMove(0, 0);
 }
 
+void ClearCharacter() {
+    WORD cursor = GetCursorPosition();
+    if(cursor%MAX_COLUMNS != 0) cursor--;
+    gVideo[cursor].color = BLACK_8BIT;
+    gVideo[cursor].c = ' ';
+    CursorPosition(cursor);
+}
+
+/**
+ * Called if 'Enter' Keyboard Interrupt occurs
+ */
+void EnterNewLine(BYTE prompt) {
+    WORD cursor = GetCursorPosition();
+    if(cursor < MAX_LINES * MAX_COLUMNS - MAX_COLUMNS)
+    {
+        CursorPosition(cursor + MAX_COLUMNS - cursor%80);
+        if(prompt) ScreenDisplay("$ ", CYAN_8BIT);
+    }
+    else ClearScreen();
+}
+
+/**
+ * Based on provided arrow (up, down, left or right) move the cursor accordingly.
+ */
+void MoveTextCursor(WORD Key) {
+    WORD CurrentCursorPosition = GetCursorPosition();
+    if (KEY_UP == Key) {
+        INT16 Offset = CurrentCursorPosition - MAX_COLUMNS;
+        if ( Offset >= 0) {
+            CursorPosition(CurrentCursorPosition - MAX_COLUMNS);
+        }
+    } else if (KEY_DOWN == Key) {
+        INT16 Offset = CurrentCursorPosition + MAX_COLUMNS;
+        if ( Offset <= MAX_LINES * MAX_COLUMNS) {
+            CursorPosition(CurrentCursorPosition + MAX_COLUMNS);
+        }
+    } else if (KEY_LEFT == Key) {
+        if ( CurrentCursorPosition - 1 >= 0) {
+            CursorPosition(CurrentCursorPosition - 1);
+        }
+    } else if (KEY_RIGHT == Key) {
+        if ( CurrentCursorPosition + 1 <= MAX_LINES * MAX_COLUMNS) {
+            CursorPosition(CurrentCursorPosition + 1);
+        }
+    } 
+}
 
 void ScreenDisplay(const char* str, BYTE color)
 {
@@ -111,7 +173,7 @@ void LogSerialAndScreen(char* FormatBuffer, ...)
     // after call logBuffer will contain formatted buffer
 
     Log(logBuffer); // log through serial
-    ScreenDisplay(logBuffer, 0x03); // display on screen - you will need to implement this part in `screen.c`
+    ScreenDisplay(logBuffer, PINK_MAGENTA_8BIT); // display on screen - you will need to implement this part in `screen.c`
 }
 
 /**
@@ -135,4 +197,76 @@ void FormattedLog(char* FormatBuffer, ...)
     // after call logBuffer will contain formatted buffer
 
     Log(logBuffer); // log through serial
+}
+
+BYTE BufferCLI[MAX_COLUMNS] = {0};
+BYTE MainScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2] = {0};
+BYTE EditScreenVideoMemoryBuffer[MAX_LINES * MAX_COLUMNS * 2] = {0};
+QWORD MainScreenCursorPosition = 0;
+QWORD EditScreenCursorPosition = 0;
+BOOL EditScreenInitialized = false;
+BOOL CapsLockOn = false;
+
+/** 
+ Initializes command buffer and edit-mode buffer.
+*/
+void CLI_init() {
+    for(int i = 0; i < MAX_COLUMNS; i++) BufferCLI[i] = (BYTE) 0;
+    CapsLockOn = false;
+}
+
+/**
+ * Saves the screen of main mode storing directly video memory
+ * @Param VideoMemoryBuffer - if NULL don't store the previous content
+ * @Param BufferSize - 20x80
+ * @Param CursorPosition - Last known cursor position when state was saved
+ */
+void 
+SaveScreen(
+    void*     VideoMemoryBuffer,
+    DWORD     BufferSize,
+    QWORD*    CursorPosition
+) {
+    if(NULL != VideoMemoryBuffer)
+        __memcpy(VideoMemoryBuffer, gVideo, BufferSize);
+    *CursorPosition = GetCursorPosition();
+}
+
+/**
+ * Restores the screen of main mode writing directly the previously saved video memory
+ * @Param VideoMemoryBuffer - if NULL empty screen to be restored
+ * @Param BufferSize - 20x80
+ * @Param CursorPosition - restore last known cursor position when state was saved
+ */
+void RestoreScreen(
+    void*   VideoMemoryBuffer,
+    DWORD   BufferSize,
+    QWORD*  cursorPosition
+) {
+    if(NULL != VideoMemoryBuffer)
+        __memcpy(gVideo, VideoMemoryBuffer, BufferSize);
+    CursorPosition(*cursorPosition);
+}
+// -------------- PRIVATE HELPER FUNCTIONS IMPLEMENTATION -------------
+// Source - https://stackoverflow.com/a
+// Posted by lost_in_the_source
+// Retrieved 2025-11-12, License - CC BY-SA 3.0
+
+void* __memcpy(void *dest, const void *src, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; ++i)
+        ((unsigned char *) dest)[i] = ((unsigned char *) src)[i];
+
+    return dest;
+}
+void* __memset(void *blk, int c, size_t n)
+{
+    size_t i;
+
+    for (i = 0; i < n; ++i)
+        ((unsigned char *) blk)[i] = c;
+
+    return blk;
 }

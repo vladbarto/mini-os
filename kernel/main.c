@@ -20,16 +20,15 @@ void KernelMain()
 
     idt_init();
     Log("IDT initialized.\n");
-    __magic();
     // Program Timer (aka PIT)
     PIT_init(100);
     PS2_keyboard_init();
     
-    __magic();
+    CLI_init();
+
     PIC_unmask(0); // IRQ0 = timer
     PIC_unmask(1); // IRQ1 = keyboard
 
-    __magic();
 /* Uncomment each one alternatively to test IDT functionality. Both uncommented will not work */
     // division by 0; generate #DE
     // int DivisionByZero = 23/0;

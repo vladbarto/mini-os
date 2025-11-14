@@ -2,7 +2,9 @@
 #define _TYPES_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
+typedef bool      BOOL;
 typedef uint8_t   BYTE, *PBYTE;
 typedef uint16_t  WORD, *PWORD;
 typedef uint32_t  DWORD, *PDWORD;

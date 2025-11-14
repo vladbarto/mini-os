@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "interrupt.h": "c"
+        "interrupt.h": "c",
+        "screen.h": "c",
+        "string.h": "c",
+        "types.h": "c",
+        "main.h": "c",
+        "pic.h": "c"
     }
 }

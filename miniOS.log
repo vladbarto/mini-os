@@ -4,41 +4,11 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
-Timer tick: 861889200
-Timer tick: 861889300
-Timer tick: 861889400
-Timer tick: 861889500
-Timer tick: 861889600
-Timer tick: 861889700
-Timer tick: 861889800
-Timer tick: 861889900
-Timer tick: 861890000
-Timer tick: 861890100
-Timer tick: 861890200
-Timer tick: 861890300
-sadTimer tick: 861890400
-dwTimer tick: 861890500
-Timer tick: 861890600
-Timer tick: 861890700
-Timer tick: 861890800
-Timer tick: 861890900
-Timer tick: 861891000
-Timer tick: 861891100
-Timer tick: 861891200
-Timer tick: 861891300
-Timer tick: 861891400
-Timer tick: 861891500
-Timer tick: 861891600
-Timer tick: 861891700
-Timer tick: 861891800
-inpTimer tick: 861891900
-utTimer tick: 861892000
-Timer tick: 861892100
-Timer tick: 861892200
-Timer tick: 861892300
-Timer tick: 861892400
-Timer tick: 861892500
-Timer tick: 861892600
-Timer tick: 861892700
-Timer tick: 861892800
-Timer tick: 861892900
+
+[CMD_INTERPRETOR] COMMAND = 
+
+[CMD_INTERPRETOR][UNK] '' is an unknown command
+hello  helloHELLOhElLo
+[CMD_INTERPRETOR] COMMAND = hello  helloHELLOhElLo
+
+[CMD_INTERPRETOR][UNK] 'hello  helloHELLOhElLo' is an unknown command
