@@ -201,14 +201,12 @@ void __InterpretCommand(char* cmd) {
         FormattedLog("[CMD_INTERPRETOR][CLEAR] Clear screen is triggered!!!!\n");
         ClearScreen();
         EnterNewLine(1);
-    } else
-    if(cl_strcmp(cmd, "time") == 0) {
+    } else if(cl_strcmp(cmd, "time") == 0) {
         INT64 ClockTicksPassed = __rdtsc();
         LogSerialAndScreen("\n[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = %D\n", ClockTicksPassed);
         __read_rtc();
         EnterNewLine(1);
-    } else 
-    if(cl_strcmp(cmd, "edit") == 0) {
+    } else if(cl_strcmp(cmd, "edit") == 0) {
         FormattedLog("[CMD_INTERPRETOR][EDIT] Edit mode enabled.\n");
         EditMode = true;
         EnterNewLine(1);
@@ -220,6 +218,53 @@ void __InterpretCommand(char* cmd) {
         } else {
             RestoreScreen((void*)EditScreenVideoMemoryBuffer, MAX_LINES * MAX_COLUMNS * 2, &EditScreenCursorPosition);
         }
+    } else if(cl_strcmp(cmd, "printmbr") == 0) {
+        BYTE mbr[512];
+        BOOL found = false;
+
+        for (int i = 0; i < 4; i++) {
+            if (g_ata_devices[i].present) {
+                if (ata_read28(&g_ata_devices[i], 0, mbr)) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            FormattedLog("[printmbr] No ATA disk available\n");
+            EnterNewLine(1);
+            return;
+        }
+
+        char line[80];
+
+        for (int r = 0; r < 512; r += 16) {
+            char* p = line;
+
+            p += cl_snprintf(p, sizeof(line) - (p - line),
+                            "%03X: ", r);
+
+            for (int i = 0; i < 16; i++)
+                p += cl_snprintf(p, sizeof(line) - (p - line),
+                                "%02X ", mbr[r + i]);
+
+            p += cl_snprintf(p, sizeof(line) - (p - line),
+                            " |");
+
+            for (int i = 0; i < 16; i++) {
+                BYTE c = mbr[r + i];
+                *p++ = (c >= 32 && c < 127) ? c : '.';
+            }
+
+            *p = 0;
+
+            FormattedLog("%s\n", line);
+            ScreenDisplay(line, CYAN_8BIT);
+            ScreenDisplay("\n", CYAN_8BIT);
+        }
+
+        EnterNewLine(1);
     } else {
         LogSerialAndScreen("\n[CMD_INTERPRETOR][UNK] \'%s\' is an unknown command\n", cmd);
         EnterNewLine(1);

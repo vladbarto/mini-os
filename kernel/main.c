@@ -26,6 +26,8 @@ void KernelMain()
     
     CLI_init();
 
+    ata_init();
+    
     PIC_unmask(0); // IRQ0 = timer
     PIC_unmask(1); // IRQ1 = keyboard
 
@@ -41,13 +43,6 @@ void KernelMain()
 //     "mov ds, ax\n\t"
 //     ".att_syntax prefix\n\t"
 // );
-
-    // TODO!!! Timer programming
-
-    // TODO!!! Keyboard programming
-
-    // TODO!!! Implement a simple console
-
     // TODO!!! read disk sectors using PIO mode ATA
 
     // TODO!!! Memory management: virtual, physical and heap memory allocators

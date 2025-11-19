@@ -20,6 +20,7 @@
 #include "types.h"
 #include "pic.h"
 #include "pit.h"
+#include "ata.h"
 //
 // exported functions from __init.asm
 //
