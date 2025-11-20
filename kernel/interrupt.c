@@ -83,11 +83,27 @@ void InterruptCommonHandler(
             __IRQ1_KeyboardHandler();
             break;
 
+        case 14: // Primary ATA
+            __inbyte(0x1F7);
+            __inbyte(0x3F6);
+            __outbyte(0xA0, 0x20); // EOI slave
+            __outbyte(0x20, 0x20); // EOI master
+            break;
+
+        case 15: // Secondary ATA
+            __inbyte(0x177);
+            __inbyte(0x376);
+            __outbyte(0xA0, 0x20); // EOI slave
+            __outbyte(0x20, 0x20); // EOI master
+            break;
+
+
         default:
             break;
         }
 
-        PIC_sendEOI(irq);
+        if(irq != 14 && irq != 15)
+            PIC_sendEOI(irq);
     }
 }
 

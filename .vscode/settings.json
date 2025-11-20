@@ -5,6 +5,7 @@
         "string.h": "c",
         "types.h": "c",
         "main.h": "c",
-        "pic.h": "c"
+        "pic.h": "c",
+        "ata.h": "c"
     }
 }

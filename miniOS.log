@@ -4,11 +4,3 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
-
-[CMD_INTERPRETOR] COMMAND = 
-
-[CMD_INTERPRETOR][UNK] '' is an unknown command
-hello  helloHELLOhElLo
-[CMD_INTERPRETOR] COMMAND = hello  helloHELLOhElLo
-
-[CMD_INTERPRETOR][UNK] 'hello  helloHELLOhElLo' is an unknown command

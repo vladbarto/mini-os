@@ -30,6 +30,9 @@ void KernelMain()
     
     PIC_unmask(0); // IRQ0 = timer
     PIC_unmask(1); // IRQ1 = keyboard
+    PIC_unmask(2);
+    PIC_unmask(14);
+    PIC_unmask(15);
 
 /* Uncomment each one alternatively to test IDT functionality. Both uncommented will not work */
     // division by 0; generate #DE
