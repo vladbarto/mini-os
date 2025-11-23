@@ -113,8 +113,8 @@ void ata_init() {
                 status = io_inb(d->io, ATA_REG_STATUS);
                 if (!(status & ATA_SR_BSY)) break;
 
-                __asm__ volatile ("STI");
-                __asm__ volatile ("HLT");
+                // __asm__ volatile ("STI");
+                // __asm__ volatile ("HLT");
             }
 
             if (status & ATA_SR_ERR)

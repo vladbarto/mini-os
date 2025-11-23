@@ -4,3 +4,29 @@ All IRQs masked with 0xFF.
 IDT initialized.
 PIT initialized for 100 Hz (divisor=11931).
 PS/2 keyboard initialized, controller cmdbyte=0x61, ack=0xFA
+gg
+[CMD_INTERPRETOR] COMMAND = 
+
+[CMD_INTERPRETOR][UNK] '' is an unknown command
+hello
+[CMD_INTERPRETOR] COMMAND = hello
+
+[CMD_INTERPRETOR][UNK] 'hello' is an unknown command
+world
+[CMD_INTERPRETOR] COMMAND = world
+
+[CMD_INTERPRETOR][UNK] 'world' is an unknown command
+time
+[CMD_INTERPRETOR] COMMAND = time
+
+[CMD_INTERPRETOR][TIME] Passed Clock Ticks since boot = 29275213287
+23/11/2025 22:26:00
+exit
+[CMD_INTERPRETOR] COMMAND = exit
+
+[CMD_INTERPRETOR][UNK] 'exit' is an unknown command
+edit
+[CMD_INTERPRETOR] COMMAND = edit
+[CMD_INTERPRETOR][EDIT] Edit mode enabled.
+Edit Mode
+ceafeaxadacdafeEdit mode exitted.
