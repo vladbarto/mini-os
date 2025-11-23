@@ -24,64 +24,6 @@ static BOOL ata_wait(ata_device_t* d) {
     return true;
 }
 
-// void ata_init() {
-//     WORD bases[2]  = { ATA_PRIMARY_IO, ATA_SECONDARY_IO };
-//     WORD ctrls[2]  = { ATA_PRIMARY_CTRL, ATA_SECONDARY_CTRL };
-
-//     int idx = 0;
-
-//     for (int bus = 0; bus < 2; bus++) {
-//         for (int slave = 0; slave < 2; slave++) {
-
-//             ata_device_t* d = &g_ata_devices[idx++];
-//             d->io   = bases[bus];
-//             d->ctrl = ctrls[bus];
-//             d->slave = slave;
-//             d->present = false;
-
-//             ata_select(d);
-
-//             io_outb(d->io, ATA_REG_SECCOUNT, 0);
-//             io_outb(d->io, ATA_REG_LBA0, 0);
-//             io_outb(d->io, ATA_REG_LBA1, 0);
-//             io_outb(d->io, ATA_REG_LBA2, 0);
-
-//             io_outb(d->io, ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
-//             BYTE status = io_inb(d->io, ATA_REG_STATUS);
-
-//             if (status == 0)
-//                 continue; // no device
-
-//             // wait BSY clear
-//             while (status & ATA_SR_BSY)
-//                 status = io_inb(d->io, ATA_REG_STATUS);
-
-//             // ATAPI?
-//             if (io_inb(d->io, ATA_REG_LBA1) == 0x14 &&
-//                 io_inb(d->io, ATA_REG_LBA2) == 0xEB)
-//                 continue;
-
-//             // wait for DRQ
-//             while (!(status & ATA_SR_DRQ) && !(status & ATA_SR_ERR))
-//                 status = io_inb(d->io, ATA_REG_STATUS);
-
-//             if (status & ATA_SR_ERR)
-//                 continue;
-
-//             // Mask nIEN in control port: 0x02 = disable interrupts
-//             __outbyte(d->ctrl, 0x02); // set nIEN to disable interrupts; prevent IRQ while polling
-
-//             // read IDENTIFY data (ignore)
-//             WORD junk;
-//             for (int i = 0; i < 256; i++)
-//                 junk = __inword(d->io + ATA_REG_DATA);
-
-//             d->present = true;
-//             ScreenDisplay("ATA device detected\n", GREEN_BRIGHT_8BIT);
-//         }
-//     }
-// }
-
 void ata_init() {
     WORD bases[2]  = { ATA_PRIMARY_IO, ATA_SECONDARY_IO };
     WORD ctrls[2]  = { ATA_PRIMARY_CTRL, ATA_SECONDARY_CTRL };
@@ -103,24 +45,19 @@ void ata_init() {
             // trimite comanda IDENTIFY
             io_outb(d->io, ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-            // verifică imediat status-ul fără bucle lungi
             BYTE status = io_inb(d->io, ATA_REG_STATUS);
             if (status == 0)
                 continue; // nu există device
 
-            // simplu poll cu mici pauze între verificări
+            // polling
             for (int i = 0; i < 1000; i++) {
                 status = io_inb(d->io, ATA_REG_STATUS);
                 if (!(status & ATA_SR_BSY)) break;
-
-                // __asm__ volatile ("STI");
-                // __asm__ volatile ("HLT");
             }
 
             if (status & ATA_SR_ERR)
                 continue; // eroare la init
 
-            // poți sări complet peste citirea DRQ 256 words dacă doar detectezi device-ul
             d->present = true;
             ScreenDisplay("ATA device detected\n", GREEN_BRIGHT_8BIT);
         }
